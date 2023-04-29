@@ -12,14 +12,14 @@ public class FilmControllerTest {
     FilmController filmController = new FilmController();
 
     protected void createTestFilms() throws ValidationException {
-        Film film1 = new Film(1,"name","description", LocalDate.of(2000,11,20), 100);
+        Film film1 = new Film(1, "name", "description", LocalDate.of(2000, 11, 20), 100);
         filmController.createFilm(film1);
     }
 
     //пустой список фильмов
     @Test
-    void getAllFilms(){
-        assertEquals(0,filmController.getAllFilms().size());
+    void getAllFilms() {
+        assertEquals(0, filmController.getAllFilms().size());
     }
 
 
@@ -27,7 +27,7 @@ public class FilmControllerTest {
     @Test
     void createFilm() throws ValidationException {
         createTestFilms();
-        assertEquals(1,filmController.getAllFilms().size());
+        assertEquals(1, filmController.getAllFilms().size());
     }
 
     //обновление фильма
@@ -35,9 +35,9 @@ public class FilmControllerTest {
     void updateFilm() throws ValidationException {
         createTestFilms();
 
-        Film filmUpdate =new Film(1,"nameUpdate","descriptionUpdate", LocalDate.of(2001,12,21), 101);
+        Film filmUpdate = new Film(1, "nameUpdate", "descriptionUpdate", LocalDate.of(2001, 12, 21), 101);
         filmController.updateFilm(filmUpdate);
-        assertEquals(1,filmController.getAllFilms().size());
-        assertEquals(filmUpdate,filmController.films.get(1));
+        assertEquals(1, filmController.getAllFilms().size());
+        assertEquals(filmUpdate, filmController.films.get(1));
     }
 }

@@ -14,7 +14,7 @@ public class Film {
     private LocalDate releaseDate;//дата релиза
     private long duration; //продолжительность фильма
 
-    public Film(int id, String name,String description,LocalDate releaseDate, long duration){
+    public Film(int id, String name, String description, LocalDate releaseDate, long duration) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -22,7 +22,7 @@ public class Film {
         this.duration = duration;
     }
 
-    public int setId(int id){
+    public int setId(int id) {
         this.id = id;
         return id;
     }
