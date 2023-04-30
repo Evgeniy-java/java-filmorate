@@ -52,7 +52,7 @@ public class UserController {
         return user;
     }
 
-    protected boolean userValidate(User user) throws ValidationException{
+    protected boolean userValidate(User user) throws ValidationException {
         if (user.getLogin().isBlank() && user.getLogin().contains(" ")) {
             log.warn("логин не может быть пустым и содержать пробелы");
             throw new ValidationException("логин не может быть пустым и содержать пробелы");
