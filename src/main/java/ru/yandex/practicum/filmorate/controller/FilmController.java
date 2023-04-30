@@ -1,8 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -13,10 +11,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
+@Slf4j
 public class FilmController {
-    private static final Logger log = LoggerFactory.getLogger(FilmController.class);
 
-    private final LocalDate dateTime = LocalDate.of(1895, 12, 28);
+    private final LocalDate OLD_DATE_FILM = LocalDate.of(1895, 12, 28);
 
     protected final Map<Integer, Film> films = new HashMap<>();
 
@@ -29,7 +27,7 @@ public class FilmController {
     //получение всех фильмов.
     @GetMapping("/films")
     public Collection<Film> getAllFilms() {
-        log.info("Количество фильмов: {}", films.size());
+        log.debug("Получен запрос Get /films ,количество фильмов: {}", films.size());
         return films.values();
     }
 
@@ -58,13 +56,15 @@ public class FilmController {
     protected boolean filmValidate(Film film) throws ValidationException {
         if (film.getName() == null || film.getName().isEmpty()) {
             log.warn("Название не может быть пустым.");
-            throw new ValidationException("Название не может быть пустым.");
+            throw new ValidationException(film.getId() + "Название не может быть пустым.");
         }
         if (film.getDescription().length() >= 200) {
-            log.warn("Максимальная длина описания — 200 символов.");
-            throw new ValidationException("Максимальная длина описания — 200 символов.");
+            log.warn("Перевышена длина описания фильма {} — максимальная длина 200 символов!",
+                    film.getName());
+            throw new ValidationException("Перевышена длина описания фильма " + film.getName() +
+                    " - максимальная длина 200 символов!");
         }
-        if (film.getReleaseDate().isBefore(dateTime)) {
+        if (film.getReleaseDate().isBefore(OLD_DATE_FILM)) {
             log.warn("дата релиза — не раньше 28 декабря 1895 года.");
             throw new ValidationException("дата релиза — не раньше 28 декабря 1895 года.");
         }

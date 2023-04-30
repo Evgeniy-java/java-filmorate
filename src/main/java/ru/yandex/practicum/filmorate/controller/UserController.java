@@ -1,21 +1,19 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.InvalidEmailException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
+import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 @RestController
+@Slf4j
 public class UserController {
-
-    private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
     protected final Map<Integer, User> users = new HashMap<>();
 
@@ -28,13 +26,13 @@ public class UserController {
     //получение списка всех пользователей.
     @GetMapping("/users")
     public Collection<User> getAllUsers() {
-        log.info("Количество пользователей: {}", users.size());
+        log.info("Получен запрос Get /users, количество пользователей: {}", users.size());
         return users.values();
     }
 
     //создание пользователя.
     @PostMapping(value = "/users")
-    public User createUser(@RequestBody User user) throws InvalidEmailException, ValidationException {
+    public User createUser(@Valid @RequestBody User user) throws ValidationException {
         if (userValidate(user)) {
             users.put(user.setId(countId()), user);
             log.info("Пользователь добавлен: {}", user);
@@ -44,7 +42,7 @@ public class UserController {
 
     //обновление пользователя
     @PutMapping(value = "/users")
-    public User updateUser(@RequestBody User user) throws InvalidEmailException, ValidationException {
+    public User updateUser(@Valid @RequestBody User user) throws ValidationException {
         if (users.get(user.getId()).getId() == user.getId()) {
             if (userValidate(user)) {
                 users.put(user.getId(), user);
@@ -54,21 +52,13 @@ public class UserController {
         return user;
     }
 
-    protected boolean userValidate(User user) throws ValidationException, InvalidEmailException {
-        if (user.getEmail() == null || user.getEmail().isBlank()) {
-            log.warn("электронная почта не может быть пустой.");
-            throw new InvalidEmailException("электронная почта не может быть пустой.");
-        }
-        if (!user.getEmail().contains("@")) {
-            log.warn("электронная почта должна содержать символ @");
-            throw new InvalidEmailException("электронная почта должна содержать символ @");
-        }
+    protected boolean userValidate(User user) throws ValidationException{
         if (user.getLogin().isBlank() && user.getLogin().contains(" ")) {
             log.warn("логин не может быть пустым и содержать пробелы");
             throw new ValidationException("логин не может быть пустым и содержать пробелы");
         }
         if (user.getName() == null || user.getName().isEmpty()) {
-            log.info("Поле имя не заполнено, используем логин");
+            log.info("Поле имя не заполнено, используем логин: {}", user.getLogin());
             user.setName(user.getLogin());
         }
         if (user.getBirthday().isAfter(LocalDate.now())) {
