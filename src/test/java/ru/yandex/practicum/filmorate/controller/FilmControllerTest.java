@@ -37,6 +37,6 @@ public class FilmControllerTest {
         Film filmUpdate = new Film(1, "nameUpdate", "descriptionUpdate", LocalDate.of(2001, 12, 21), 101);
         filmController.updateFilm(filmUpdate);
         assertEquals(1, filmController.getAllFilms().size());
-        assertEquals(filmUpdate, filmController.films.get(1));
+        assertEquals(filmUpdate, filmController.getFilms().get(1));
     }
 }

@@ -28,7 +28,7 @@ public class UserControllerTest {
         User user1 = new User(1, "email@test.com", "login", "name", LocalDate.of(1999, 9, 9));
         userController.createUser(user1);
         assertEquals(1, userController.getAllUsers().size());
-        assertEquals(user1, userController.users.get(1));
+        assertEquals(user1, userController.getUsers().get(1));
     }
 
     //Обновление полльзователя
@@ -38,6 +38,6 @@ public class UserControllerTest {
         User userUpdate = new User(1, "updateemail@test.com", "update login", "update name", LocalDate.of(2000, 10, 10));
         userController.updateUser(userUpdate);
         assertEquals(1, userController.getAllUsers().size());
-        assertEquals(userUpdate, userController.users.get(1));
+        assertEquals(userUpdate, userController.getUsers().get(1));
     }
 }
