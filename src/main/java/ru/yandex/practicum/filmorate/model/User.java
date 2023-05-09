@@ -33,14 +33,4 @@ public class User {
         this.id = id;
         return id;
     }
-
-    //добавить друга по id
-    public void addFriend(Long id) {
-        friends.add(id);
-    }
-
-    //удалить друга по id
-    public void removeFriends(Long id) {
-        friends.remove(id);
-    }
 }
