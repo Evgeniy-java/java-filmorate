@@ -2,36 +2,36 @@ package ru.yandex.practicum.filmorate.storage.user;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
-import javax.validation.Valid;
 import java.time.LocalDate;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Component
 @Slf4j
 public class InMemoryUserStorage implements UserStorage {
-    protected final Map<Integer, User> users = new HashMap<>();
+    //коллекция пользователей
+    protected final Map<Long, User> users = new HashMap<>();
 
-    public Map<Integer, User> getUsers() {
-        return users;
-    }
+    private long generationId = 0;
 
-    private int generationId = 0;
-
-    private int countId() {
+    //последовательная генерация id
+    private Long countId() {
         return ++generationId;
     }
 
+    //получить пользователя по id
+    @Override
+    public User getUserById(long id) {
+        if (!users.containsKey(id)) {
+            throw new UserNotFoundException("Не найден пользователь с id: " + id);
+        }
+        return users.get(id);
+    }
+
     //получение списка всех пользователей
-    @GetMapping("/users")
     @Override
     public Collection<User> getAllUsers() {
         log.info("Получен запрос Get /users, количество пользователей: {}", users.size());
@@ -40,8 +40,7 @@ public class InMemoryUserStorage implements UserStorage {
 
     //создание пользователя
     @Override
-    @PostMapping(value = "/users")
-    public User createUser(@Valid @RequestBody User user) {
+    public User createUser(User user) {
         if (userValidate(user)) {
             users.put(user.setId(countId()), user);
             log.info("Пользователь добавлен: {}", user);
@@ -50,9 +49,8 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     //обновление пользователя
-    @PutMapping(value = "/users")
     @Override
-    public User updateUser(@Valid @RequestBody User user) {
+    public User updateUser(User user) {
         if (users.containsKey(user.getId())) {
             if (users.containsKey(user.getId())) {
                 users.put(user.getId(), user);
