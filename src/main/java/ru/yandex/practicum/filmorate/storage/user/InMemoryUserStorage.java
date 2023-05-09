@@ -34,7 +34,6 @@ public class InMemoryUserStorage implements UserStorage {
     //получение списка всех пользователей
     @Override
     public Collection<User> getAllUsers() {
-        log.info("Получен запрос Get /users, количество пользователей: {}", users.size());
         return users.values();
     }
 
@@ -43,7 +42,6 @@ public class InMemoryUserStorage implements UserStorage {
     public User createUser(User user) {
         if (userValidate(user)) {
             users.put(user.setId(countId()), user);
-            log.info("Пользователь добавлен: {}", user);
         }
         return user;
     }
@@ -54,10 +52,8 @@ public class InMemoryUserStorage implements UserStorage {
         if (users.containsKey(user.getId())) {
             if (users.containsKey(user.getId())) {
                 users.put(user.getId(), user);
-                log.info("Пользователь добавлен: {}", user);
             }
         } else {
-            log.warn("Пользователь: {} с таким id не существует", user.getName());
             throw new ValidationException("Пользователь: " + user.getName() + " с таким id не существует");
         }
         return user;

@@ -34,11 +34,13 @@ public class User {
         return id;
     }
 
-    public void addFriend(Long id){
+    //добавить друга по id
+    public void addFriend(Long id) {
         friends.add(id);
     }
 
-    public void removeFriends(Long id){
+    //удалить друга по id
+    public void removeFriends(Long id) {
         friends.remove(id);
     }
 }

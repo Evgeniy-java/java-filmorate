@@ -46,7 +46,7 @@ public class UserController {
     //обновление пользователя
     @PutMapping
     public User updateUser(@Valid @RequestBody User user) {
-        log.info("Получен запрос Put /users на удаление пользователя: {}", user);
+        log.info("Получен запрос Put /users на обновление пользователя: {}", user);
         return userService.updateUser(user);
     }
 
