@@ -2,10 +2,6 @@ package ru.yandex.practicum.filmorate.storage.film;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
@@ -19,30 +15,29 @@ import java.util.Map;
 public class InMemoryFilmStorage implements FilmStorage {
     protected static LocalDate OLD_DATE_FILM = LocalDate.of(1895, 12, 28);
 
-    protected final Map<Integer, Film> films = new HashMap<>();
+    protected final Map<Long, Film> films = new HashMap<>();
 
-    public Map<Integer, Film> getFilms() {
-        return films;
-    }
+    private long generationId = 0;
 
-    private int generationId = 0;
-
-    private int countId() {
+    private Long countId() {
         return ++generationId;
     }
 
+    //получить фильм по Id
+    @Override
+    public Film getFilmsById(Long id) {
+        return films.get(id);
+    }
+
     //получение всех фильмов.
-    @GetMapping("/films")
     @Override
     public Collection<Film> getAllFilms() {
-        log.debug("Получен запрос Get /films ,количество фильмов: {}", films.size());
         return films.values();
     }
 
     //добавление фильма.
-    @PostMapping(value = "/films")
     @Override
-    public Film createFilm(@RequestBody Film film) {
+    public Film createFilm( Film film) {
         if (filmValidate(film)) {
             films.put(film.setId(countId()), film);
             log.info("Добавлен фильм: {}", film);
@@ -51,9 +46,8 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     //обновление фильма.
-    @PutMapping(value = "/films")
     @Override
-    public Film updateFilm(@RequestBody Film film) {
+    public Film updateFilm( Film film) {
         if (films.containsKey(film.getId())) {
             if (filmValidate(film)) {
                 films.put(film.setId(film.getId()), film);

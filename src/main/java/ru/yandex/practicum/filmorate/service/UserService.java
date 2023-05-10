@@ -71,7 +71,7 @@ public class UserService {
         //второй пользователь
         User secondUser = userStorage.getUserById(secondUserId);
 
-        //если нет одного из пользователей то вернуть пустой список
+        //если общих друзей нет вернуть пустой список
         if (firstUser == null || secondUser == null) {
             return new ArrayList<>();
         }

@@ -2,13 +2,14 @@ package ru.yandex.practicum.filmorate.controller;
 
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.model.Film;
-
+import ru.yandex.practicum.filmorate.service.FilmService;
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FilmControllerTest {
-    FilmController filmController = new FilmController();
+    public FilmService filmService;
+    FilmController filmController = new FilmController(filmService);
 
     protected void createTestFilms() {
         Film film1 = new Film(1, "name", "description", LocalDate.of(2000, 11, 20), 100);
@@ -37,6 +38,6 @@ public class FilmControllerTest {
         Film filmUpdate = new Film(1, "nameUpdate", "descriptionUpdate", LocalDate.of(2001, 12, 21), 101);
         filmController.updateFilm(filmUpdate);
         assertEquals(1, filmController.getAllFilms().size());
-        assertEquals(filmUpdate, filmController.getFilms().get(1));
+        assertEquals(filmUpdate, filmController.getFilmsById(1L));
     }
 }
