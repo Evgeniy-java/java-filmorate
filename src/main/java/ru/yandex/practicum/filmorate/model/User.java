@@ -11,7 +11,7 @@ import java.util.Set;
 @Data
 @EqualsAndHashCode
 public class User {
-    private Long id; //целочисленный идентификатор
+    private long id; //целочисленный идентификатор
     @Email(message = "электронная почта не может быть пустой и должна содержать символ @")
     private String email; //электронная почта
     private String login; //логин пользователя

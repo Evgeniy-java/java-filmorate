@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
@@ -10,7 +11,8 @@ import java.util.Collection;
 @RestController
 @RequestMapping("/films")
 @Slf4j
-public class FilmController{
+public class FilmController {
+
     private final FilmService filmService;
 
     public FilmController(FilmService filmService) {
@@ -43,5 +45,41 @@ public class FilmController{
     public Film updateFilm(@RequestBody final Film film) {
         log.debug("Получен запрос Put /films ,обновление фильма: {}", film);
         return filmService.updateFilm(film);
+    }
+
+    //удаление фильма по id
+    @DeleteMapping("/{id}")
+    public void deleteFilmById(@PathVariable("id") Long id) {
+        log.debug("Получен запрос Delete /films/{id} ,удаление фильма по id: {}", id);
+        filmService.deleteFilmById(id);
+    }
+
+    //пользователь ставит лайк фильму
+    @PutMapping("/{id}/like/{userId}")
+    public void addLikeFilm(@PathVariable("id") final Long id,
+                            @PathVariable("userId") final Long userId) {
+        log.debug("Получен запрос Put /films/{id}/like/{userId} " +
+                        "пользователь с id: {} ставит лайк фильму с id: {}",
+                userId, id);
+        filmService.addLikeFilm(id, userId);
+    }
+
+    //пользователь удаляет лайк
+    @DeleteMapping("/{id}/like/{userId}")
+    public void deleteLikeFilm(@PathVariable("id") final Long id,
+                               @PathVariable("userId") final Long userId) {
+        log.debug("Получен запрос Delete /films/{id}/like/{userId} " +
+                        "пользователь с id: {} убирает лайк к фильму с id: {}",
+                userId, id);
+        filmService.deleteLikeFilm(id, userId);
+    }
+
+    //возвращает список из первых count фильмов по количеству лайков
+    @GetMapping("/popular")
+    public Collection<Film> getPopularFilms(@RequestParam(name = "count", defaultValue = "10", required = false)
+                                                    final Long count) {
+        log.debug("Получен запрос Get /films/popular?count={count} " +
+                "на возврат списка из первых: {} фильмов по количеству лайков", count);
+        return filmService.getPopularFilms(count);
     }
 }

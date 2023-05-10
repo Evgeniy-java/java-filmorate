@@ -16,4 +16,7 @@ public interface FilmStorage {
 
     //обновление фильма.
     Film updateFilm(Film film);
+
+    //удаление фильма по id
+    void deleteFilmById(Long id);
 }

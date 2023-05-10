@@ -2,6 +2,8 @@ package ru.yandex.practicum.filmorate.storage.film;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.exception.IncorrectParameterException;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
@@ -13,6 +15,7 @@ import java.util.Map;
 @Component
 @Slf4j
 public class InMemoryFilmStorage implements FilmStorage {
+
     protected static LocalDate OLD_DATE_FILM = LocalDate.of(1895, 12, 28);
 
     protected final Map<Long, Film> films = new HashMap<>();
@@ -26,6 +29,12 @@ public class InMemoryFilmStorage implements FilmStorage {
     //получить фильм по Id
     @Override
     public Film getFilmsById(Long id) {
+        if (!films.containsKey(id)) {
+            throw new NotFoundException("Не найден фильм с id: " + id);
+        }
+        if (id <= 0) {
+            throw new IncorrectParameterException("id");
+        }
         return films.get(id);
     }
 
@@ -37,7 +46,7 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     //добавление фильма.
     @Override
-    public Film createFilm( Film film) {
+    public Film createFilm(Film film) {
         if (filmValidate(film)) {
             films.put(film.setId(countId()), film);
             log.info("Добавлен фильм: {}", film);
@@ -47,7 +56,7 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     //обновление фильма.
     @Override
-    public Film updateFilm( Film film) {
+    public Film updateFilm(Film film) {
         if (films.containsKey(film.getId())) {
             if (filmValidate(film)) {
                 films.put(film.setId(film.getId()), film);
@@ -58,6 +67,14 @@ public class InMemoryFilmStorage implements FilmStorage {
             throw new ValidationException("Фильма: " + film.getName() + " с таким id не существует");
         }
         return film;
+    }
+
+    //удаление фильма по id
+    @Override
+    public void deleteFilmById(Long id) {
+        if (!films.containsKey(id)) {
+            throw new NotFoundException("Фильм с Id: " + id + " не найден");
+        } else films.remove(id);
     }
 
     protected boolean filmValidate(Film film) {
