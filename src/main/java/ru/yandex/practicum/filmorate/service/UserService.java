@@ -18,7 +18,7 @@ public class UserService {
     }
 
     //получить пользователя по id
-    public User getUserById(Long id) {
+    public User getUserById(long id) {
         return userStorage.getUserById(id);
     }
 
@@ -38,7 +38,7 @@ public class UserService {
     }
 
     //добавить пользователя в друзья
-    public void addFriend(Long userId, Long friendId) {
+    public void addFriend(long userId, long friendId) {
         User userById = userStorage.getUserById(userId);
         User friendById = userStorage.getUserById(friendId);
 
@@ -47,7 +47,7 @@ public class UserService {
     }
 
     //удалить из дрзуей
-    public void deleteFriend(Long userId, Long friendId) {
+    public void deleteFriend(long userId, long friendId) {
         User userById = userStorage.getUserById(userId);
         User friendById = userStorage.getUserById(friendId);
 
@@ -56,7 +56,7 @@ public class UserService {
     }
 
     //получить список друзей пользователя
-    public List<User> getUserFriendsById(Long id) {
+    public List<User> getUserFriendsById(long id) {
         Set<Long> userFriends = userStorage.getUserById(id).getFriends();
 
         return userFriends.stream()
@@ -65,7 +65,7 @@ public class UserService {
     }
 
     //получить список друзей общих с другим пользователем
-    public Collection<User> getCommonFriends(Long firstUserId, Long secondUserId) {
+    public Collection<User> getCommonFriends(long firstUserId, long secondUserId) {
         //первый пользователь
         User firstUser = userStorage.getUserById(firstUserId);
         //второй пользователь

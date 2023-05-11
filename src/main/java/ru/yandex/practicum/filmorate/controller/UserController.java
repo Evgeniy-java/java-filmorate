@@ -21,7 +21,7 @@ public class UserController {
 
     //получение пользователя по id
     @GetMapping("/{id}")
-    public User getUserById(@PathVariable("id") final Long id) {
+    public User getUserById(@PathVariable("id") long id) {
         log.debug("Получен запрос Get /users/{id} на получение пользователя по id: {}", id);
         if (id <= 0) {
             throw new IncorrectParameterException("id");
@@ -38,14 +38,14 @@ public class UserController {
 
     //создание пользователя
     @PostMapping
-    public User createUser(@Valid @RequestBody final User user) {
+    public User createUser(@Valid @RequestBody User user) {
         log.debug("Получен запрос Post /users на добавлен пользователя: {}", user);
         return userService.createUser(user);
     }
 
     //обновление пользователя
     @PutMapping
-    public User updateUser(@Valid @RequestBody final User user) {
+    public User updateUser(@Valid @RequestBody User user) {
         log.debug("Получен запрос Put /users на обновление пользователя: {}", user);
         return userService.updateUser(user);
     }
@@ -53,8 +53,8 @@ public class UserController {
     //добавление в друзья
     @PutMapping("/{id}/friends/{friendId}")
     public void addFriend(
-            @PathVariable("id") final Long id,
-            @PathVariable("friendId") final Long friendId) {
+            @PathVariable("id") long id,
+            @PathVariable("friendId") long friendId) {
         log.debug("Получен запрос Put /users/{id}/friends/{friendId} " +
                         "на добавление пользователя с Id: {} в друзья пользователю с Id: {}",
                 friendId, id);
@@ -64,8 +64,8 @@ public class UserController {
     //удаление из друзей
     @DeleteMapping("/{id}/friends/{friendId}")
     public void deleteFriend(
-            @PathVariable("id") final Long id,
-            @PathVariable("friendId") final Long friendId) {
+            @PathVariable("id") long id,
+            @PathVariable("friendId") long friendId) {
         log.debug("Получен запрос Delete /users/{id}/friends/{friendId} " +
                         "на удаление пользователя с Id: {} из друзей пользователя с Id: {}",
                 id, friendId);
@@ -74,7 +74,7 @@ public class UserController {
 
     //возвращаем список пользователей, являющихся его друзьями
     @GetMapping("/{id}/friends")
-    public Collection<User> getUserFriendsById(@PathVariable("id") final Long id) {
+    public Collection<User> getUserFriendsById(@PathVariable("id") long id) {
         log.debug("Получен запрос Get /users/{id}/friends " +
                 "на получение списка друзей пользователя с Id: {}", id);
         return userService.getUserFriendsById(id);
@@ -83,8 +83,8 @@ public class UserController {
     //список друзей, общих с другим пользователем
     @GetMapping("/{id}/friends/common/{otherId}")
     public Collection<User> getCommonFriends(
-            @PathVariable("id") final Long id,
-            @PathVariable("otherId") final Long otherId) {
+            @PathVariable("id") long id,
+            @PathVariable("otherId") long otherId) {
         log.debug("Получен запрос Get /users/{id}/friends/common/{otherId} " +
                         "на получение списка общих друзей пользователей с Id: {} и Id: {}",
                 id, otherId);

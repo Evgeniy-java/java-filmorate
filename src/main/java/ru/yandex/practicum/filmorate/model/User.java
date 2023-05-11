@@ -18,7 +18,7 @@ public class User {
     private String name; //имя для отображения
     private LocalDate birthday; //дата рождения
 
-    //информация о том, что два пользователя являются друзьями
+    //список с информацией о том, что два пользователя являются друзьями
     private Set<Long> friends = new HashSet<>();
 
     public User(long id, String email, String login, String name, LocalDate birthday) {
@@ -29,7 +29,7 @@ public class User {
         this.birthday = birthday;
     }
 
-    public long setId(Long id) {
+    public long setId(long id) {
         this.id = id;
         return id;
     }

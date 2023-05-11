@@ -2,10 +2,10 @@ package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
+import javax.validation.constraints.Positive;
 import java.util.Collection;
 
 @RestController
@@ -21,7 +21,7 @@ public class FilmController {
 
     //получить фильм по Id
     @GetMapping("/{id}")
-    public Film getFilmsById(@PathVariable("id") final Long id) {
+    public Film getFilmsById(@PathVariable("id") long id) {
         log.debug("Получен запрос Get /films/{id} ,получение фильма по id: {}", id);
         return filmService.getFilmsById(id);
     }
@@ -35,29 +35,30 @@ public class FilmController {
 
     //добавление фильма.
     @PostMapping
-    public Film createFilm(@RequestBody final Film film) {
+    public Film createFilm(@RequestBody Film film) {
         log.debug("Получен запрос Post /films ,добавление фильма: {}", film);
         return filmService.createFilm(film);
     }
 
     //обновление фильма.
     @PutMapping
-    public Film updateFilm(@RequestBody final Film film) {
+    public Film updateFilm(@RequestBody Film film) {
         log.debug("Получен запрос Put /films ,обновление фильма: {}", film);
         return filmService.updateFilm(film);
     }
 
     //удаление фильма по id
     @DeleteMapping("/{id}")
-    public void deleteFilmById(@PathVariable("id") Long id) {
+    public void deleteFilmById(@PathVariable("id") long id) {
         log.debug("Получен запрос Delete /films/{id} ,удаление фильма по id: {}", id);
         filmService.deleteFilmById(id);
     }
 
     //пользователь ставит лайк фильму
     @PutMapping("/{id}/like/{userId}")
-    public void addLikeFilm(@PathVariable("id") final Long id,
-                            @PathVariable("userId") final Long userId) {
+    public void addLikeFilm(
+            @PathVariable("id") long id,
+            @PathVariable("userId") long userId) {
         log.debug("Получен запрос Put /films/{id}/like/{userId} " +
                         "пользователь с id: {} ставит лайк фильму с id: {}",
                 userId, id);
@@ -66,8 +67,9 @@ public class FilmController {
 
     //пользователь удаляет лайк
     @DeleteMapping("/{id}/like/{userId}")
-    public void deleteLikeFilm(@PathVariable("id") final Long id,
-                               @PathVariable("userId") final Long userId) {
+    public void deleteLikeFilm(
+            @PathVariable("id") long id,
+            @PathVariable("userId") long userId) {
         log.debug("Получен запрос Delete /films/{id}/like/{userId} " +
                         "пользователь с id: {} убирает лайк к фильму с id: {}",
                 userId, id);
@@ -76,10 +78,12 @@ public class FilmController {
 
     //возвращает список из первых count фильмов по количеству лайков
     @GetMapping("/popular")
-    public Collection<Film> getPopularFilms(@RequestParam(name = "count", defaultValue = "10", required = false)
-                                                    final Long count) {
+    public Collection<Film> getPopularFilms(
+            @RequestParam(defaultValue = "10")
+            @Positive(message = "не корректное значение count") long count) {
         log.debug("Получен запрос Get /films/popular?count={count} " +
                 "на возврат списка из первых: {} фильмов по количеству лайков", count);
+
         return filmService.getPopularFilms(count);
     }
 }

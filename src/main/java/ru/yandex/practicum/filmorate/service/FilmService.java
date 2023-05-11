@@ -8,7 +8,6 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
-import javax.validation.constraints.Positive;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
@@ -46,34 +45,42 @@ public class FilmService {
     }
 
     //удаление фильма по id
-    public void deleteFilmById(Long id) {
+    public void deleteFilmById(long id) {
         filmStorage.deleteFilmById(id);
     }
 
     //пользователь ставит лайк фильму
-    public void addLikeFilm(Long Id, Long userId) {
-        Film film = filmStorage.getFilmsById(Id);
+    public void addLikeFilm(Long id, long userId) {
+        Film film = getFilmsById(id);
+        System.out.println("dfgdfgdfgdfg");
+        System.out.println(filmStorage.getFilmsById(id));
 
-        if (userStorage.getUserById(userId) == null) {
-            log.warn("Пользователь с id: {} не найден!", userId);
+        if (userStorage.getUserById(userId) != null) {
+            film.getLikes().add(userId);
+            log.info("пользователь с Id: {} поставил лайк фильму с id: {}", userId, id);
+        } else {
+            log.debug("Пользователь с id: {} не найден!", userId);
             throw new NotFoundException(String.format("Пользователь с id: %s не найден!", userId));
         }
-        film.getLikes().add(userId);
     }
 
     //пользователь удаляет лайк
-    public void deleteLikeFilm(Long Id, Long userId) {
-        Film film = filmStorage.getFilmsById(Id);
+    public void deleteLikeFilm(long id, long userId) {
+        Film film = getFilmsById(id);
 
-        if (film.getLikes() == null) {
-            log.warn("Лайк от пользователя с id: {} не найден!", userId);
-            throw new NotFoundException(String.format("Лайк от пользователя с id: %s не найден!", userId));
+        if (id < 0) {
+            throw new NotFoundException(String.format("Фильм Id: %s с отрицательным значением!", id));
         }
+        if (userId < 0) {
+            throw new NotFoundException(String.format("Пользователь с Id: %s с отрицательным значением!", userId));
+        }
+
         film.getLikes().remove(userId);
+        log.debug("Пользователь с Id: {} удалил лайк фильму с Id: {}", userId, id);
     }
 
     //возвращает список из первых count фильмов по количеству лайков
-    public Collection<Film> getPopularFilms(@Positive Long count) {
+    public Collection<Film> getPopularFilms(long count) {
         return filmStorage.getAllFilms().stream()
                 .sorted((f1, f2) -> f2.getLikes().size() - f1.getLikes().size())
                 .limit(count)

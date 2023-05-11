@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -14,7 +15,7 @@ public class Film {
     private String description; //описание
     private LocalDate releaseDate;//дата релиза
     private long duration; //продолжительность фильма
-    private Set<Long> likes; //список понравившихся фильмов
+    private Set<Long> likes = new HashSet<>(); //список понравившихся фильмов
 
     public Film(long id, String name, String description, LocalDate releaseDate, long duration) {
         this.id = id;

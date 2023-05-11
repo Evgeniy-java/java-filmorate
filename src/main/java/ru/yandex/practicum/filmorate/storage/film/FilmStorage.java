@@ -6,7 +6,7 @@ import java.util.Collection;
 
 public interface FilmStorage {
     //получить фильм по Id
-    Film getFilmsById(Long id);
+    Film getFilmsById(long id);
 
     //получение всех фильмов.
     Collection<Film> getAllFilms();
@@ -18,5 +18,5 @@ public interface FilmStorage {
     Film updateFilm(Film film);
 
     //удаление фильма по id
-    void deleteFilmById(Long id);
+    void deleteFilmById(long id);
 }
