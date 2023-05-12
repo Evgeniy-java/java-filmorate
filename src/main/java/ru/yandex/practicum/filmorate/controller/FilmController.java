@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.validation.FilmValidate;
 
 import javax.validation.constraints.Positive;
 import java.util.Collection;
@@ -21,7 +22,9 @@ public class FilmController {
 
     //получить фильм по Id
     @GetMapping("/{id}")
-    public Film getFilmsById(@PathVariable("id") long id) {
+    public Film getFilmsById(
+            @Positive(message = "некорректное число id")
+            @PathVariable("id") long id) {
         log.debug("Получен запрос Get /films/{id} ,получение фильма по id: {}", id);
         return filmService.getFilmsById(id);
     }
@@ -37,14 +40,21 @@ public class FilmController {
     @PostMapping
     public Film createFilm(@RequestBody Film film) {
         log.debug("Получен запрос Post /films ,добавление фильма: {}", film);
-        return filmService.createFilm(film);
+
+        if (FilmValidate.filmValidate(film)) {
+            return filmService.createFilm(film);
+        }
+        return film;
     }
 
     //обновление фильма.
     @PutMapping
     public Film updateFilm(@RequestBody Film film) {
-        log.debug("Получен запрос Put /films ,обновление фильма: {}", film);
-        return filmService.updateFilm(film);
+        if (FilmValidate.filmValidate(film)) {
+            log.debug("Получен запрос Put /films ,обновление фильма: {}", film);
+            return filmService.updateFilm(film);
+        }
+        return film;
     }
 
     //удаление фильма по id
@@ -57,8 +67,8 @@ public class FilmController {
     //пользователь ставит лайк фильму
     @PutMapping("/{id}/like/{userId}")
     public void addLikeFilm(
-            @PathVariable("id") long id,
-            @PathVariable("userId") long userId) {
+            @Positive(message = "id должен быть положительным числом") @PathVariable("id") long id,
+            @Positive(message = "userId должен быть положительным числом") @PathVariable("userId") long userId) {
         log.debug("Получен запрос Put /films/{id}/like/{userId} " +
                         "пользователь с id: {} ставит лайк фильму с id: {}",
                 userId, id);
@@ -68,8 +78,8 @@ public class FilmController {
     //пользователь удаляет лайк
     @DeleteMapping("/{id}/like/{userId}")
     public void deleteLikeFilm(
-            @PathVariable("id") long id,
-            @PathVariable("userId") long userId) {
+            @Positive(message = "id должен быть положительным числом") @PathVariable("id") long id,
+            @Positive(message = "userId должен быть положительным числом") @PathVariable("userId") long userId) {
         log.debug("Получен запрос Delete /films/{id}/like/{userId} " +
                         "пользователь с id: {} убирает лайк к фильму с id: {}",
                 userId, id);

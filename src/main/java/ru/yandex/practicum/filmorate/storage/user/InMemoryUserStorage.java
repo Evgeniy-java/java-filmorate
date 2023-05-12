@@ -59,6 +59,12 @@ public class InMemoryUserStorage implements UserStorage {
         return user;
     }
 
+    //проверка существует пользователь или нет по id
+    @Override
+    public boolean userExists(long id){
+        return users.containsKey(id);
+    }
+
     protected boolean userValidate(User user) {
         //логин не может быть пустым и содержать пробелы
         if (user.getLogin().isBlank() && user.getLogin().contains(" ")) {

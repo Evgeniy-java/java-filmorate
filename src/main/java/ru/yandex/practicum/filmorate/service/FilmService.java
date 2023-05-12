@@ -52,10 +52,8 @@ public class FilmService {
     //пользователь ставит лайк фильму
     public void addLikeFilm(Long id, long userId) {
         Film film = getFilmsById(id);
-        System.out.println("dfgdfgdfgdfg");
-        System.out.println(filmStorage.getFilmsById(id));
 
-        if (userStorage.getUserById(userId) != null) {
+        if (userStorage.userExists(userId)) {
             film.getLikes().add(userId);
             log.info("пользователь с Id: {} поставил лайк фильму с id: {}", userId, id);
         } else {
@@ -68,15 +66,13 @@ public class FilmService {
     public void deleteLikeFilm(long id, long userId) {
         Film film = getFilmsById(id);
 
-        if (id < 0) {
-            throw new NotFoundException(String.format("Фильм Id: %s с отрицательным значением!", id));
+        if (userStorage.userExists(userId)) {
+            film.getLikes().remove(userId);
+            log.debug("Пользователь с Id: {} удалил лайк фильму с Id: {}", userId, id);
+        } else {
+            log.debug("Пользователь с id: {} не найден!", userId);
+            throw new NotFoundException(String.format("Пользователь с id: %s не найден!", userId));
         }
-        if (userId < 0) {
-            throw new NotFoundException(String.format("Пользователь с Id: %s с отрицательным значением!", userId));
-        }
-
-        film.getLikes().remove(userId);
-        log.debug("Пользователь с Id: {} удалил лайк фильму с Id: {}", userId, id);
     }
 
     //возвращает список из первых count фильмов по количеству лайков

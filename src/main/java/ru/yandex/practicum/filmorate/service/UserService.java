@@ -71,11 +71,6 @@ public class UserService {
         //второй пользователь
         User secondUser = userStorage.getUserById(secondUserId);
 
-        //если общих друзей нет вернуть пустой список
-        if (firstUser == null || secondUser == null) {
-            return new ArrayList<>();
-        }
-
         Set<Long> commonFriends = new HashSet<>(firstUser.getFriends());
         commonFriends.retainAll(secondUser.getFriends());
         return commonFriends.stream()

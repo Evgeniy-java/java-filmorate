@@ -1,8 +1,11 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.time.LocalDate;
 
@@ -10,9 +13,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class UserControllerTest {
 
-    protected InMemoryUserStorage userController = new InMemoryUserStorage();
+    private UserController userController;
 
-    protected void createTestUsers() {
+    @BeforeEach
+    void beforeEach() {
+        UserStorage filmStorage = new InMemoryUserStorage();
+        userController = new UserController(new UserService(filmStorage));
+    }
+
+    void createTestUsers() {
         User user1 = new User(1, "email@test.com", "login", "name", LocalDate.of(1999, 9, 9));
         userController.createUser(user1);
     }

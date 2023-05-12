@@ -21,7 +21,8 @@ public class UserController {
 
     //получение пользователя по id
     @GetMapping("/{id}")
-    public User getUserById(@PathVariable("id") long id) {
+    public User getUserById(
+            @PathVariable("id") long id) {
         log.debug("Получен запрос Get /users/{id} на получение пользователя по id: {}", id);
         if (id <= 0) {
             throw new IncorrectParameterException("id");

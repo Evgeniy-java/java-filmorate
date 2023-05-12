@@ -17,4 +17,7 @@ public interface UserStorage {
 
     //обновление пользователя
     User updateUser(User user);
+
+    //проверка существует пользователь или нет по id
+    boolean userExists(long id);
 }
