@@ -61,7 +61,7 @@ public class InMemoryUserStorage implements UserStorage {
 
     //проверка существует пользователь или нет по id
     @Override
-    public boolean userExists(long id){
+    public boolean userExists(long id) {
         return users.containsKey(id);
     }
 
