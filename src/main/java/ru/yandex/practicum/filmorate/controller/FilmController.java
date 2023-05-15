@@ -2,91 +2,98 @@ package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.validation.FilmValidate;
 
-import java.time.LocalDate;
+import javax.validation.constraints.Positive;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 @RestController
+@RequestMapping("/films")
 @Slf4j
 public class FilmController {
 
-    protected static LocalDate OLD_DATE_FILM = LocalDate.of(1895, 12, 28);
+    private final FilmService filmService;
 
-    protected final Map<Integer, Film> films = new HashMap<>();
+    public FilmController(FilmService filmService) {
+        this.filmService = filmService;
+    }
 
-    private int generationId = 0;
-
-    private int countId() {
-        return ++generationId;
+    //получить фильм по Id
+    @GetMapping("/{id}")
+    public Film getFilmsById(
+            @Positive(message = "некорректное число id")
+            @PathVariable("id") long id) {
+        log.debug("Получен запрос Get /films/{id} ,получение фильма по id: {}", id);
+        return filmService.getFilmsById(id);
     }
 
     //получение всех фильмов.
-    @GetMapping("/films")
+    @GetMapping
     public Collection<Film> getAllFilms() {
-        log.debug("Получен запрос Get /films ,количество фильмов: {}", films.size());
-        return films.values();
+        log.debug("Получен запрос Get /films ,количество фильмов: {}", filmService.getAllFilms().size());
+        return filmService.getAllFilms();
     }
 
     //добавление фильма.
-    @PostMapping(value = "/films")
+    @PostMapping
     public Film createFilm(@RequestBody Film film) {
-        if (filmValidate(film)) {
-            films.put(film.setId(countId()), film);
-            log.info("Добавлен фильм: {}", film);
+        log.debug("Получен запрос Post /films ,добавление фильма: {}", film);
+
+        if (FilmValidate.filmValidate(film)) {
+            return filmService.createFilm(film);
         }
         return film;
     }
 
     //обновление фильма.
-    @PutMapping(value = "/films")
+    @PutMapping
     public Film updateFilm(@RequestBody Film film) {
-        if (films.containsKey(film.getId())) {
-            if (filmValidate(film)) {
-                films.put(film.setId(film.getId()), film);
-                log.info("Изменен фильм>: {}", film);
-            }
-        } else {
-            log.warn("Фильма: {} с таким id не существует", film.getName());
-            throw new ValidationException("Фильма: " + film.getName() + " с таким id не существует");
+        if (FilmValidate.filmValidate(film)) {
+            log.debug("Получен запрос Put /films ,обновление фильма: {}", film);
+            return filmService.updateFilm(film);
         }
         return film;
     }
 
-    protected boolean filmValidate(Film film) {
-        //название фильма не может быть пустым
-        if (film.getName() == null || film.getName().isEmpty()) {
-            log.warn("Фильм с id: {} ,название не может быть пустым.", film.getId());
-            throw new ValidationException("Фильм с id: " + film.getId() + " ,название не может быть пустым.");
-        }
-        //длина описания фильма не более 200 символов
-        if (film.getDescription().length() >= 200) {
-            if (film.getName() != null) {
-                log.warn("Перевышена длина описания фильма {} — максимальная длина 200 символов! Введено: {}",
-                        film.getName(), film.getDescription().length());
-                throw new ValidationException("Перевышена длина описания фильма " + film.getName() +
-                        " - максимальная длина 200 символов! Введено: " + film.getDescription().length());
-            } else
-                log.warn("Перевышена длина описания фильма с id: {} — максимальная длина 200 символов! Введено: {}",
-                        film.getId(), film.getDescription().length());
-            throw new ValidationException("Перевышена длина описания фильма с id: " + film.getId() +
-                    " - максимальная длина 200 символов! Введено: " + film.getDescription().length());
-        }
-        //дата релиза фильма не раньше 28.12.1895
-        if (film.getReleaseDate().isBefore(OLD_DATE_FILM)) {
-            log.warn("дата релиза фильма: {} должна быть — не раньше 28 декабря 1895 года.", film.getName());
-            throw new ValidationException("дата релиза фильма: " + film.getName() +
-                    " должна быть — не раньше 28 декабря 1895 года. Указана: " + film.getReleaseDate());
-        }
-        //продолжительность фильма должна быть положительной
-        if (film.getDuration() < 0) {
-            log.warn("Продолжительность фильма: {} должна быть положительной. Указана: {}", film.getName(), film.getDuration());
-            throw new ValidationException("Продолжительность фильма: " + film.getName() +
-                    " должна быть положительной. Указана: " + film.getDuration());
-        }
-        return true;
+    //удаление фильма по id
+    @DeleteMapping("/{id}")
+    public void deleteFilmById(@PathVariable("id") long id) {
+        log.debug("Получен запрос Delete /films/{id} ,удаление фильма по id: {}", id);
+        filmService.deleteFilmById(id);
+    }
+
+    //пользователь ставит лайк фильму
+    @PutMapping("/{id}/like/{userId}")
+    public void addLikeFilm(
+            @Positive(message = "id должен быть положительным числом") @PathVariable("id") long id,
+            @Positive(message = "userId должен быть положительным числом") @PathVariable("userId") long userId) {
+        log.debug("Получен запрос Put /films/{id}/like/{userId} " +
+                        "пользователь с id: {} ставит лайк фильму с id: {}",
+                userId, id);
+        filmService.addLikeFilm(id, userId);
+    }
+
+    //пользователь удаляет лайк
+    @DeleteMapping("/{id}/like/{userId}")
+    public void deleteLikeFilm(
+            @Positive(message = "id должен быть положительным числом") @PathVariable("id") long id,
+            @Positive(message = "userId должен быть положительным числом") @PathVariable("userId") long userId) {
+        log.debug("Получен запрос Delete /films/{id}/like/{userId} " +
+                        "пользователь с id: {} убирает лайк к фильму с id: {}",
+                userId, id);
+        filmService.deleteLikeFilm(id, userId);
+    }
+
+    //возвращает список из первых count фильмов по количеству лайков
+    @GetMapping("/popular")
+    public Collection<Film> getPopularFilms(
+            @RequestParam(defaultValue = "10")
+            @Positive(message = "не корректное значение count") long count) {
+        log.debug("Получен запрос Get /films/popular?count={count} " +
+                "на возврат списка из первых: {} фильмов по количеству лайков", count);
+
+        return filmService.getPopularFilms(count);
     }
 }
