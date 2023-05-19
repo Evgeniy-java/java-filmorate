@@ -15,6 +15,8 @@ public class Film {
     private String description; //описание
     private LocalDate releaseDate;//дата релиза
     private long duration; //продолжительность фильма
+    private FilmGenre genre; //Жанр фильма
+    private MotionPictureAssociation rating; //Рейтинг фильма по MPA
     private Set<Long> likes = new HashSet<>(); //список понравившихся фильмов
 
     public Film(long id, String name, String description, LocalDate releaseDate, long duration) {

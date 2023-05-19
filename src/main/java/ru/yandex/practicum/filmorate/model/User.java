@@ -17,6 +17,7 @@ public class User {
     private String login; //логин пользователя
     private String name; //имя для отображения
     private LocalDate birthday; //дата рождения
+    private FriendsStatus friendsStatus; //статус дружба между пользователями
 
     //список с информацией о том, что два пользователя являются друзьями
     private Set<Long> friends = new HashSet<>();
