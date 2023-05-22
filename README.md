@@ -1,5 +1,5 @@
 # java-filmorate application
-[filmorate DB ER-diagram](images/filmorate_ER-diagram.png)
+![filmorate DB ER-diagram](images/filmorate_ER-diagram.png)
 
 ## Пояснение к схеме
 
