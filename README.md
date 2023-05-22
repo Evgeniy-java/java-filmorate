@@ -64,3 +64,17 @@ GROUP BY m.name
 ORDER BY count_likes DESC
 LIMIT 20; 
 ```
+
++ Узнать топ 10 пользователей с максимальным количеством друзей
+```
+SELECT u.first_name, 
+       COUNT(fL.user_id) AS count_friends
+FROM users AS u
+INNER JOIN frendlist AS fL ON u.user_id=fL.user_id
+WHERE friends_status = 'true'
+GROUP BY u.first_name
+ORDER BY count_friends DESC
+LIMIT 10; 
+```
+
+
