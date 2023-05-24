@@ -69,7 +69,7 @@ LIMIT 20;
 SELECT u.first_name, 
        COUNT(fL.user_id) AS count_friends
 FROM users AS u
-INNER JOIN friends AS fL ON u.user_id=fL.user_id
+INNER JOIN friends AS f ON u.user_id=f.user_id
 WHERE friends_status = 'true'
 GROUP BY u.first_name
 ORDER BY count_friends DESC
