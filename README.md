@@ -3,7 +3,7 @@
 
 ## Пояснение к схеме
 
-### movie
+### films
 Содержание информации о фильмах.
 #### Таблица состоит из полей:
 + первичный ключ ```film_id``` - идентификатор фильма;
@@ -25,9 +25,8 @@
 ### likes
 Содержит информацию о лайках к фильмам которые поставили пользователи.
 #### В таблицу входят поля:
-+ первичный ключ ```like_id``` - идентификатор лайков;
-+ вторичный ключ ```user_id``` - идентификатор пользователя;
-+ вторичный ключ ```film_id``` - идентификатор фильма.
++ первичный ключ ```film_id``` - идентификатор фильма;
++ вторичный ключ ```user_id``` - идентификатор пользователя.
 
 ### frendlist
 Содержит информацию о статусе заявок в друзья.
@@ -50,7 +49,7 @@
 + Добавить поле genre к таблице movie и вывести информацию о фильмах.
 ```
 SELECT *
-FROM movie AS m
+FROM films AS m
 INNER JOIN genre AS g ON m.genre_id=g.genre_id;
 ```
 
@@ -58,7 +57,7 @@ INNER JOIN genre AS g ON m.genre_id=g.genre_id;
 ```
 SELECT m.name, 
        COUNT(l.user_id) AS count_likes
-FROM movie AS m
+FROM films AS m
 INNER JOIN likes AS l ON m.film_id=l.film_id
 GROUP BY m.name
 ORDER BY count_likes DESC
