@@ -28,7 +28,7 @@
 + первичный ключ ```film_id``` - идентификатор фильма;
 + вторичный ключ ```likesbyuser_id``` - лайки по идентификатору пользователя.
 
-### friendlist
+### friends
 Содержит информацию о статусе заявок в друзья.
 #### В таблицу входят поля:
 + первичный ключ ```user_id``` - идентификатор пользователя;
@@ -69,7 +69,7 @@ LIMIT 20;
 SELECT u.first_name, 
        COUNT(fL.user_id) AS count_friends
 FROM users AS u
-INNER JOIN friendlist AS fL ON u.user_id=fL.user_id
+INNER JOIN friends AS fL ON u.user_id=fL.user_id
 WHERE friends_status = 'true'
 GROUP BY u.first_name
 ORDER BY count_friends DESC
