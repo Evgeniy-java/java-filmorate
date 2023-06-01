@@ -45,7 +45,7 @@
 #### В таблицу входят поля:
 + первичный ключ ```user_id``` - идентификатор пользователя;
 + вторичный ключ ```friend_id``` - идентификатор пользователя для дружбы;
-+ ```status``` - статус дружбы.
++ ```friends_status``` - статус дружбы.
 
 ### users
 Содержит данные о пользователях.
@@ -83,7 +83,7 @@ SELECT u.first_name,
        COUNT(f.friend_id) AS count_friends
 FROM users AS u
 INNER JOIN friendship AS f ON u.user_id=f.user_id
-WHERE status = 'CONFIRMED'
+WHERE friends_status = 'CONFIRMED'
 GROUP BY u.first_name
 ORDER BY count_friends DESC
 LIMIT 10; 
