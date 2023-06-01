@@ -12,9 +12,22 @@
 + ```relese_date``` - год выхода;
 + ```duration``` - продолжительность фильма в минутах;
 + внешний ключ ```genre_id``` - идентификатор жанра;
-+ ```rating``` - возрастной рейтинг, например:
++ внешний ключ ```mpa_id``` - идентификатор рейтинга;
+
+### mpa
+Содержит информацию о рейтинге Ассоциации кинокомпаний (MPA)
+#### В таблицу входят поля:
++ первичный ключ ```mpa_id``` - идентификатор рейтинга;
++ ```rating``` - возрастной рейтинг;
++ ```description``` - описание рейтинга например:
 	 - PG - детям рекомендуется смотреть такой фильм с родителями;
 	- PG-13 - детям до 13 лет смотреть такой фильм нежелательно.
+
+### film_genre
+Содержит информатцию идентификаторов жанра и фильма, образуют составной ключ между таблицами films и genre
+#### В таблицу входят поля:
++первичный ключ ```genre_id``` - идентификатор жанра;
++внешний ключ ```film_id``` - идентификатор фильма.
 
 ### genre
 Содержит информацию о жанрах кино.
@@ -22,18 +35,18 @@
 + первичный ключ ```genre_id``` - идентификатор жанра;
 + ```name``` - название жанра.
 
-### likes
+### film_likes
 Содержит информацию о лайках к фильмам которые поставили пользователи.
 #### В таблицу входят поля:
 + первичный ключ ```film_id``` - идентификатор фильма;
-+ вторичный ключ ```likesbyuser_id``` - лайки по идентификатору пользователя.
++ вторичный ключ ```user_id``` - идентификатор пользователя.
 
-### friends
+### friendship
 Содержит информацию о статусе заявок в друзья.
 #### В таблицу входят поля:
-+ первичный ключ ```user_id``` - идентификатор пользователя;
-+ ```friend_id``` - идентификатор пользователя для дружбы;
-+ ```friendship``` - подтверждения добавления в друзья.
++ первичный ключ ```user_from``` - идентификатор пользователя;
++ ```user_to``` - идентификатор пользователя для дружбы;
++ ```status``` - статус дружбы.
 
 ### users
 Содержит данные о пользователях.
@@ -49,16 +62,17 @@
 + Добавить поле genre к таблице movie и вывести информацию о фильмах.
 ```
 SELECT *
-FROM films AS m
-INNER JOIN genre AS g ON m.genre_id=g.genre_id;
+FROM films AS f
+INNER JOIN film_genre AS fG ON f.id=fG.film_id;
+INNER JOIN genre AS g ON g.genre_id=fG.genre_id;
 ```
 
 + Узнать топ 20 фильмов по количеству лайков.
 ```
 SELECT m.name, 
-       COUNT(l.user_id) AS count_likes
+       COUNT(fL.user_id) AS count_likes
 FROM films AS m
-INNER JOIN likes AS l ON m.film_id=l.film_id
+INNER JOIN film_like AS fL ON m.film_id=fL.film_id
 GROUP BY m.name
 ORDER BY count_likes DESC
 LIMIT 20; 
@@ -67,10 +81,10 @@ LIMIT 20;
 + Узнать топ 10 пользователей с максимальным количеством друзей
 ```
 SELECT u.first_name, 
-       COUNT(fL.user_id) AS count_friends
+       COUNT(f.user_id) AS count_friends
 FROM users AS u
-INNER JOIN friends AS f ON u.user_id=f.user_id
-WHERE friendship = 'true'
+INNER JOIN friendship AS f ON u.id=f.user_to
+WHERE status = 'CONFIRMED'
 GROUP BY u.first_name
 ORDER BY count_friends DESC
 LIMIT 10; 
