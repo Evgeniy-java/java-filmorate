@@ -62,8 +62,8 @@
 ```
 SELECT *
 FROM films AS f
-INNER JOIN film_genre AS fG ON f.id=fG.film_id;
 INNER JOIN genre AS g ON g.genre_id=fG.genre_id;
+INNER JOIN film_genre AS fG ON f.id=fG.film_id;
 ```
 
 + Узнать топ 20 фильмов по количеству лайков.
