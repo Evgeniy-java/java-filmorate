@@ -6,7 +6,7 @@
 ### films
 Содержание информации о фильмах.
 #### Таблица состоит из полей:
-+ первичный ключ ```film_id``` - идентификатор фильма;
++ первичный ключ ```id``` - идентификатор фильма;
 + ```name``` - название фильма;
 + ```description``` - описание фильма;
 + ```relese_date``` - год выхода;
@@ -50,7 +50,7 @@
 ### users
 Содержит данные о пользователях.
 #### Таблица включает поля:
-+ первичный ключ ```user_id``` - идентификатор пользователя;
++ первичный ключ ```id``` - идентификатор пользователя;
 + ```email``` - электронная почта;
 + ```login``` - имя авторизации пользователя;
 + ```first_name``` - имя пользователя;
@@ -68,10 +68,10 @@ INNER JOIN film_genre AS fG ON f.id=fG.film_id;
 
 + Узнать топ 20 фильмов по количеству лайков.
 ```
-SELECT m.name, 
+SELECT f.name, 
        COUNT(fL.user_id) AS count_likes
-FROM films AS m
-INNER JOIN film_like AS fL ON m.film_id=fL.film_id
+FROM films AS f
+INNER JOIN film_like AS fL ON f.id=fL.film_id
 GROUP BY m.name
 ORDER BY count_likes DESC
 LIMIT 20; 
@@ -82,7 +82,7 @@ LIMIT 20;
 SELECT u.first_name, 
        COUNT(f.friend_id) AS count_friends
 FROM users AS u
-INNER JOIN friendship AS f ON u.user_id=f.user_id
+INNER JOIN friendship AS f ON u.id=f.user_id
 WHERE friends_status = 'CONFIRMED'
 GROUP BY u.first_name
 ORDER BY count_friends DESC
