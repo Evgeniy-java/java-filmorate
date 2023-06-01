@@ -43,8 +43,8 @@
 ### friendship
 Содержит информацию о статусе заявок в друзья.
 #### В таблицу входят поля:
-+ первичный ключ ```user_from``` - идентификатор пользователя;
-+ вторичный ключ ```user_to``` - идентификатор пользователя для дружбы;
++ первичный ключ ```user_id``` - идентификатор пользователя;
++ вторичный ключ ```friend_id``` - идентификатор пользователя для дружбы;
 + ```status``` - статус дружбы.
 
 ### users
@@ -80,9 +80,9 @@ LIMIT 20;
 + Узнать топ 10 пользователей с максимальным количеством друзей
 ```
 SELECT u.first_name, 
-       COUNT(f.user_id) AS count_friends
+       COUNT(f.friend_id) AS count_friends
 FROM users AS u
-INNER JOIN friendship AS f ON u.id=f.user_to
+INNER JOIN friendship AS f ON u.user_id=f.user_id
 WHERE status = 'CONFIRMED'
 GROUP BY u.first_name
 ORDER BY count_friends DESC
