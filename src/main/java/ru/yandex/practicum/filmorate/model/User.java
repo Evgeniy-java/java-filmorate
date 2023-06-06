@@ -22,6 +22,9 @@ public class User {
     //список с информацией о том, что два пользователя являются друзьями
     private Set<Long> friends = new HashSet<>();
 
+    public User() {
+    }
+
     public User(long id, String email, String login, String name, LocalDate birthday) {
         this.id = id;
         this.email = email;
