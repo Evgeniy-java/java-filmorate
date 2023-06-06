@@ -6,7 +6,7 @@
 ### films
 Содержание информации о фильмах.
 #### Таблица состоит из полей:
-+ первичный ключ ```id``` - идентификатор фильма;
++ первичный ключ ```film_id``` - идентификатор фильма;
 + ```name``` - название фильма;
 + ```description``` - описание фильма;
 + ```relese_date``` - год выхода;
@@ -17,8 +17,7 @@
 Содержит информацию о рейтинге Ассоциации кинокомпаний (MPA)
 #### В таблицу входят поля:
 + первичный ключ ```mpa_id``` - идентификатор рейтинга;
-+ ```rating``` - возрастной рейтинг;
-+ ```description``` - описание рейтинга например:
++ ```rating``` - возрастной рейтинг, например:
 	 - PG - детям рекомендуется смотреть такой фильм с родителями;
 	- PG-13 - детям до 13 лет смотреть такой фильм нежелательно.
 
@@ -28,13 +27,13 @@
 + первичный ключ ```genre_id``` - идентификатор жанра;
 + внешний ключ ```film_id``` - идентификатор фильма.
 
-### genre
+### genres
 Содержит информацию о жанрах кино.
 #### В таблицу входят поля:
 + первичный ключ ```genre_id``` - идентификатор жанра;
 + ```name``` - название жанра.
 
-### film_likes
+### film_like
 Содержит информацию о лайках к фильмам которые поставили пользователи.
 #### В таблицу входят поля:
 + первичный ключ ```film_id``` - идентификатор фильма;
@@ -50,7 +49,7 @@
 ### users
 Содержит данные о пользователях.
 #### Таблица включает поля:
-+ первичный ключ ```id``` - идентификатор пользователя;
++ первичный ключ ```user_id``` - идентификатор пользователя;
 + ```email``` - электронная почта;
 + ```login``` - имя авторизации пользователя;
 + ```first_name``` - имя пользователя;
@@ -63,7 +62,7 @@
 SELECT *
 FROM films AS f
 INNER JOIN genre AS g ON g.genre_id=fG.genre_id;
-INNER JOIN film_genre AS fG ON f.id=fG.film_id;
+INNER JOIN film_genre AS fG ON f.film_id=fG.film_id;
 ```
 
 + Узнать топ 20 фильмов по количеству лайков.
@@ -71,7 +70,7 @@ INNER JOIN film_genre AS fG ON f.id=fG.film_id;
 SELECT f.name, 
        COUNT(fL.user_id) AS count_likes
 FROM films AS f
-INNER JOIN film_like AS fL ON f.id=fL.film_id
+INNER JOIN film_like AS fL ON f.film_id=fL.film_id
 GROUP BY m.name
 ORDER BY count_likes DESC
 LIMIT 20; 
@@ -82,7 +81,7 @@ LIMIT 20;
 SELECT u.first_name, 
        COUNT(f.friend_id) AS count_friends
 FROM users AS u
-INNER JOIN friendship AS f ON u.id=f.user_id
+INNER JOIN friendship AS f ON u.user_id=f.user_id
 WHERE friends_status = 'CONFIRMED'
 GROUP BY u.first_name
 ORDER BY count_friends DESC
