@@ -6,4 +6,9 @@ import lombok.Data;
 public class Mpaa {
     private long id;
     private String name; //рейтинг Ассоциации кинокомпаний
+
+    public Mpaa(long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 }
