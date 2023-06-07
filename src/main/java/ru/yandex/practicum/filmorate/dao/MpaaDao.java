@@ -8,5 +8,5 @@ import java.util.Optional;
 public interface MpaaDao {
     Collection<Mpaa> getAllMpaa();
 
-    Optional<Mpaa> getMpaaById(long id);
+    Mpaa getMpaaById(long id);
 }

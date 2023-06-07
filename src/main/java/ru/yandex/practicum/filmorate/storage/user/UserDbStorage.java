@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.storage.user;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
@@ -18,6 +19,7 @@ import java.util.*;
 @Component
 @RequiredArgsConstructor
 @Slf4j
+@Primary
 public class UserDbStorage implements UserStorage {
     private final JdbcTemplate jdbcTemplate;
 
@@ -83,7 +85,6 @@ public class UserDbStorage implements UserStorage {
         return (count == 1) ? true : false;
     }
 
-    @Override
     public Collection<User> getUserFriends(Set<Long> friendsId) {
         String sql = String.join(",", Collections.nCopies(friendsId.size(), "?"));
 

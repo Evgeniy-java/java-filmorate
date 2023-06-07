@@ -26,7 +26,7 @@ public class GenresDaoImpl implements GenresDao {
     }
 
     @Override
-    public Optional<Genre> getGenreById(long id) {
+    public Genre getGenreById(long id) {
         // выполняем запрос к базе данных.
         SqlRowSet genreRows = jdbcTemplate.queryForRowSet("select * from genres where genre_id = ?", id);
 
@@ -38,10 +38,10 @@ public class GenresDaoImpl implements GenresDao {
 
             log.info("Найден жанр: {} {}", genreRows.getString("genre_id"), genreRows.getString("genre_name"));
 
-            return Optional.of(genre);
+            return genre;
         } else {
             log.debug("Жанр с идентификатором {} не найден.", id);
-            return Optional.empty();
+            return null;
         }
     }
 

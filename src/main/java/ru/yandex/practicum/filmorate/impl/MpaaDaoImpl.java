@@ -26,7 +26,7 @@ public class MpaaDaoImpl implements MpaaDao {
     }
 
     @Override
-    public Optional<Mpaa> getMpaaById(long id) {
+    public Mpaa getMpaaById(long id) {
         // выполняем запрос к базе данных.
         SqlRowSet genreRows = jdbcTemplate.queryForRowSet("select * from mpaa where mpaa_id = ?", id);
 
@@ -38,10 +38,10 @@ public class MpaaDaoImpl implements MpaaDao {
 
             log.info("Найден жанр: {} {}", genreRows.getString("mpaa_id"), genreRows.getString("name"));
 
-            return Optional.of(mpaa);
+            return mpaa;
         } else {
             log.debug("Жанр с идентификатором {} не найден.", id);
-            return Optional.empty();
+            return null;
         }
     }
 

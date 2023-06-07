@@ -22,5 +22,4 @@ public interface UserStorage {
     //проверка существует пользователь или нет по id
     boolean userExists(long id);
 
-    Collection<User> getUserFriends(Set<Long> friendsId);
 }
