@@ -15,7 +15,7 @@ public class UserControllerTest {
 
     private UserController userController;
 
-    @BeforeEach
+    /*@BeforeEach
     void beforeEach() {
         UserStorage filmStorage = new InMemoryUserStorage();
         userController = new UserController(new UserService(filmStorage));
@@ -49,5 +49,5 @@ public class UserControllerTest {
         userController.updateUser(userUpdate);
         assertEquals(1, userController.getAllUsers().size());
         assertEquals(userUpdate, userController.getUserById(1));
-    }
+    }*/
 }

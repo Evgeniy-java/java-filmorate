@@ -2,14 +2,12 @@ package ru.yandex.practicum.filmorate.storage.user;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.dao.FriendsDao;
-import ru.yandex.practicum.filmorate.exception.IncorrectParameterException;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.sql.ResultSet;
@@ -23,9 +21,6 @@ import java.util.*;
 public class UserDbStorage implements UserStorage {
     private final JdbcTemplate jdbcTemplate;
 
-    @Qualifier
-    private final FriendsDao friendsDao;
-
     @Override
     public User getUserById(long id) {
         String sql = "Select user_id, email, login, first_name, birthday from users where user_id = ?";
@@ -34,7 +29,7 @@ public class UserDbStorage implements UserStorage {
             return jdbcTemplate.queryForObject(sql, new UserMapper(), id);
         } else {
             log.debug("некорректный id пользователя{}", id);
-            throw new IncorrectParameterException(String.format("некорректный id %s пользователя", id));
+            throw new NotFoundException(String.format("некорректный id %s пользователя", id));
         }
     }
 
@@ -46,6 +41,7 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public User createUser(User user) {
+
         SimpleJdbcInsert simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("users")
                 .usingGeneratedKeyColumns("user_id");
@@ -65,10 +61,10 @@ public class UserDbStorage implements UserStorage {
     @Override
     public User updateUser(User user) {
         if (userExists(user.getId())) {
-            jdbcTemplate.queryForObject("select user_id from users where users_id = ?", Long.class, user.getId());
+            jdbcTemplate.queryForObject("select user_id from users where user_id = ?", Long.class, user.getId());
         } else {
             log.debug("некорректный id пользователя{}", user.getId());
-            throw new IncorrectParameterException(String.format("некорректный id %s пользователя", user.getId()));
+            throw new NotFoundException(String.format("некорректный id %s пользователя", user.getId()));
         }
 
         String sql = "update users set email = ?, login = ?, first_name = ?, birthday = ? where user_id = ?";
@@ -82,7 +78,9 @@ public class UserDbStorage implements UserStorage {
         String sql = "select count (user_id) from users where user_id = ?";
         Long count = jdbcTemplate.queryForObject(sql, Long.class, id);
 
-        return (count == 1) ? true : false;
+        if (count != 0) {
+            return true;
+        } else return false;
     }
 
     public Collection<User> getUserFriends(Set<Long> friendsId) {
@@ -93,7 +91,7 @@ public class UserDbStorage implements UserStorage {
                 friendsId.toArray());
     }
 
-    private class UserMapper implements RowMapper<User> {
+    private static class UserMapper implements RowMapper<User> {
         User user = new User();
 
         @Override
@@ -101,9 +99,9 @@ public class UserDbStorage implements UserStorage {
             user.setId(rs.getLong("user_id"));
             user.setEmail(rs.getString("email"));
             user.setLogin(rs.getString("login"));
-            user.setName(rs.getString("name"));
+            user.setName(rs.getString("first_name"));
             user.setBirthday(rs.getDate("birthday").toLocalDate());
-            user.getFriends().addAll(friendsDao.getFriendsIds(user.getId()));
+            user.setFriends(null);
 
             return user;
         }
