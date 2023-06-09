@@ -18,8 +18,8 @@ class FilmoRateApplicationTests {
 
     @Test
     public void testFindUserById() {
-        User user = new User(1,"email","login","name", LocalDate.now());
+        User user = new User(1, "email", "login", "name", LocalDate.now());
 
-        assertEquals(1,user.getId());
+        assertEquals(1, user.getId());
     }
 }
