@@ -57,7 +57,7 @@ public class GenresDaoImpl implements GenresDao {
         return new Genre(rs.getLong("genre_id"), rs.getString("genre_name"));
     }
 
-    public List<Long> getFilmGenresId(long filmId){
+    public List<Long> getFilmGenresId(long filmId) {
         String sql = "select genre_id from film_genre where film_id = ?";
         return jdbcTemplate.queryForList(sql, Long.class, filmId);
     }
