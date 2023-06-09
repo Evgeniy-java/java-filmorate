@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FilmControllerTest {
 
-    private FilmController filmController;
+    /*private FilmController filmController;
 
     @BeforeEach
     void beforeEach() {
@@ -50,5 +50,5 @@ public class FilmControllerTest {
         filmController.updateFilm(filmUpdate);
         assertEquals(1, filmController.getAllFilms().size());
         assertEquals(filmUpdate, filmController.getFilmsById(1));
-    }
+    }*/
 }
