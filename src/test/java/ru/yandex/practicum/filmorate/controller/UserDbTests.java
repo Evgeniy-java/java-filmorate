@@ -7,8 +7,7 @@ import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class UserDbTests {
-
+public class UserDbTests {
     @Test
     public void testFindUserById() {
         User user = new User(1, "email", "login", "name", LocalDate.now());
