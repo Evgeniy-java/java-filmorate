@@ -6,12 +6,12 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
-import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.dao.GenresDao;
 import ru.yandex.practicum.filmorate.dao.LikesDao;
 import ru.yandex.practicum.filmorate.dao.MpaDao;
 import ru.yandex.practicum.filmorate.exception.IncorrectParameterException;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 
@@ -32,20 +32,12 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Film getFilmsById(long id) {
-        SqlRowSet filmRows = jdbcTemplate.queryForRowSet("select * from films where film_id = ?", id);
+        String sql = "select * from films where film_id = ?";
+        List<Film> film = jdbcTemplate.query(sql, new FilmMapper(), id);
 
-        if (filmRows.next()) {
-            Film film = new Film(
-                    filmRows.getLong("film_id"),
-                    filmRows.getString("name"),
-                    filmRows.getString("description"),
-                    Objects.requireNonNull(filmRows.getDate("release_date")).toLocalDate(),
-                    filmRows.getLong("duration"),
-                    mpaDao.getMpaById(filmRows.getLong("mpa_id"))
-            );
-
-            log.debug("Получен фильм: {} с id - {}", film.getName(), film.getId());
-            return film;
+        if (!film.isEmpty()) {
+            log.debug("Получен фильм с id - {}", id);
+            return film.get(0);
         } else {
             log.warn("Фильма с id {} нет", id);
             throw new IncorrectParameterException(String.format("Фильма с id %s нет", id));
@@ -81,18 +73,28 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Film updateFilm(Film film) {
-        String sql = "update films set name = ?, description = ?, release_date = ?," +
-                "duration = ?, mpa_id = ? where film_id = ?";
-        int resNumber = jdbcTemplate.update(sql, film.getName(), film.getName(), film.getDescription(),
-                film.getReleaseDate(), film.getDuration(), film.getId());
+        String sql = "select count(film_id) from films where film_id = ?";
+        Long count = jdbcTemplate.queryForObject(sql, Long.class, film.getId());
 
-        if (resNumber != 0) {
-            log.debug("Обновлен фильм: {} с id - {}", film.getName(), film.getId());
+        if (count == 1) {
+            String update = "update films set name = ?, " +
+                    "description = ?, release_date = ?, duration = ?, mpa_id = ? where film_id = ?";
+
+            jdbcTemplate.update(update,
+                    film.getName(),
+                    film.getDescription(),
+                    film.getReleaseDate(),
+                    film.getDuration(),
+                    film.getMpa().getId(),
+                    film.getId());
+
             updateGenreFilmTable(film);
+
+            log.debug("Обновлен фильм: {} с id - {}", film.getName(), film.getId());
             return film;
         } else {
             log.warn("Фильма с id {} нет", film.getId());
-            throw new IncorrectParameterException(String.format("Фильма с id %s нет", film.getId()));
+            throw new NotFoundException(String.format("Фильма с id %s нет", film.getId()));
         }
     }
 
@@ -100,6 +102,14 @@ public class FilmDbStorage implements FilmStorage {
     public void deleteFilmById(long id) {
         String sql = "delete from film where film_id = ?";
         jdbcTemplate.update(sql, id);
+    }
+
+    @Override
+    public boolean filmExists(long id) {
+        String sql = "select count (film_id) from films where film_id = ?";
+        Long count = jdbcTemplate.queryForObject(sql, Long.class, id);
+
+        return count != 0;
     }
 
     private class FilmMapper implements RowMapper<Film> {
@@ -114,13 +124,13 @@ public class FilmDbStorage implements FilmStorage {
             film.setMpa(mpaDao.getMpaById(rs.getLong("mpa_id")));
             film.getLikes().addAll(likesDao.getLikedUsersId(rs.getLong("film_id")));
 
-            String genresQuery = "select genre_id from film_genre where film_id = ?";
-            List<Long> genresIds = jdbcTemplate.queryForList(genresQuery, Long.class, film.getId());
-            for (Long genreId : genresIds) {
-                film.getFilmGenres().add(genresDao.getGenreById(genreId));
+            for (Long genreId : genresDao.getFilmGenresId(rs.getLong("film_id"))) {
+                film.getGenres().add(genresDao.getGenreById(genreId));
             }
+
             return film;
         }
+
     }
 
     private void updateGenreFilmTable(Film film) {
@@ -128,7 +138,7 @@ public class FilmDbStorage implements FilmStorage {
         jdbcTemplate.update(sql, film.getId());
 
         String insert = "insert into film_genre (film_id,genre_id) values (?,?)";
-        for (Genre genre : film.getFilmGenres()) {
+        for (Genre genre : film.getGenres()) {
             jdbcTemplate.update(insert, film.getId(), genre.getId());
         }
     }

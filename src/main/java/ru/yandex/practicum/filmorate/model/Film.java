@@ -1,7 +1,7 @@
 package ru.yandex.practicum.filmorate.model;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.Comparator;
@@ -10,7 +10,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 @Data
-@EqualsAndHashCode
+@RequiredArgsConstructor
 public class Film {
     private long id; //целочисленный идентификатор
     private String name; //название
@@ -19,31 +19,15 @@ public class Film {
     private long duration; //продолжительность фильма
     private Set<Long> likes = new HashSet<>(); //список понравившихся фильмов
 
-    private Mpa mpa;
-    private Set<Genre> filmGenres = new TreeSet<>(Comparator.comparingLong(Genre::getId)); //список жанров
-
-    public Film() {
-    }
-
-    public Film(long id, String name, String description, LocalDate releaseDate, long duration) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.releaseDate = releaseDate;
-        this.duration = duration;
-    }
-
-    public Film(long id, String name, String description, LocalDate releaseDate, long duration, Mpa mpa) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.releaseDate = releaseDate;
-        this.duration = duration;
-        this.mpa = mpa;
-    }
+    private Mpa mpa; //категория фильма
+    private Set<Genre> genres = new TreeSet<>(Comparator.comparingLong(Genre::getId)); //список жанров
 
     public long setId(long id) {
         this.id = id;
         return id;
+    }
+
+    public void setGenres(Set<Genre> genres) {
+        this.genres.addAll(genres);
     }
 }

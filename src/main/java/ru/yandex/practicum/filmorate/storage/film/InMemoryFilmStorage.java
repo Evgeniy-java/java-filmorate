@@ -66,4 +66,9 @@ public class InMemoryFilmStorage implements FilmStorage {
             throw new NotFoundException(String.format("Фильм с Id: %s не найден", id));
         } else films.remove(id);
     }
+
+    @Override
+    public boolean filmExists(long id) {
+        return films.containsKey(id);
+    }
 }

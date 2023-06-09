@@ -46,7 +46,7 @@ public class UserService {
         }
     }
 
-    //удалить из дрзуей
+    //удалить из друзей
     public void deleteFriend(long userId, long friendId) {
         if (userStorage.userExists(friendId)) {
             friendsDao.deleteFriend(userId, friendId);

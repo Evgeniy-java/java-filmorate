@@ -9,5 +9,6 @@ public interface MpaDao {
 
     Mpa getMpaById(long id);
 
-    void mpaExisted(long id);
+    //проверка существования фильма по id
+    boolean mpaExists(long id);
 }

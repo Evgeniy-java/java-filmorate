@@ -42,7 +42,7 @@ public class UserDbStorage implements UserStorage {
     @Override
     public User createUser(User user) {
 
-        SimpleJdbcInsert simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
+        SimpleJdbcInsert insert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("users")
                 .usingGeneratedKeyColumns("user_id");
 
@@ -52,7 +52,7 @@ public class UserDbStorage implements UserStorage {
         values.put("first_name", user.getName());
         values.put("birthday", user.getBirthday());
 
-        long userId = (long) simpleJdbcInsert.executeAndReturnKey(values);
+        long userId = (long) insert.executeAndReturnKey(values);
         user.setId(userId);
 
         return user;

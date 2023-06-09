@@ -4,13 +4,16 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.dao.LikesDao;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.util.Collection;
-import java.util.stream.Collectors;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -20,10 +23,15 @@ public class FilmService {
     private final FilmStorage filmStorage;
     @Qualifier("UserDbStorage")
     private final UserStorage userStorage;
+    private final LikesDao likesDao;
 
     //получить фильм по Id
     public Film getFilmsById(Long id) {
-        return filmStorage.getFilmsById(id);
+        if (filmStorage.filmExists(id)) {
+            return filmStorage.getFilmsById(id);
+        } else {
+            throw new NotFoundException(String.format("id %s не корректный", id));
+        }
     }
 
     //получение всех фильмов.
@@ -74,9 +82,9 @@ public class FilmService {
 
     //возвращает список из первых count фильмов по количеству лайков
     public Collection<Film> getPopularFilms(long count) {
-        return filmStorage.getAllFilms().stream()
-                .sorted((f1, f2) -> f2.getLikes().size() - f1.getLikes().size())
-                .limit(count)
-                .collect(Collectors.toList());
+        List<Film> films = (List<Film>) filmStorage.getAllFilms();
+        films.sort(Comparator.comparingInt(film -> likesDao.getLikedUsersId(film.getId()).size()));
+        Collections.reverse(films);
+        return films.subList(0, (int) Math.min(films.size(), count));
     }
 }

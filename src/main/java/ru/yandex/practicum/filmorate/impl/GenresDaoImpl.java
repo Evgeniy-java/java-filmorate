@@ -6,12 +6,13 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.dao.GenresDao;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Genre;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
-import java.util.Optional;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -36,16 +37,28 @@ public class GenresDaoImpl implements GenresDao {
                     genreRows.getLong("genre_id"),
                     genreRows.getString("genre_name"));
 
-            log.info("Найден жанр: {} {}", genreRows.getString("genre_id"), genreRows.getString("genre_name"));
+            log.info("Найден жанр {} c id {}", genreRows.getString("genre_name"), genreRows.getString("genre_id"));
 
             return genre;
         } else {
-            log.debug("Жанр с идентификатором {} не найден.", id);
-            return null;
+            log.debug("Жанр с id {} не найден.", id);
+            throw new NotFoundException(String.format("Жанр с id %s не найден.", id));
         }
+    }
+
+    @Override
+    public boolean mpaExists(long id) {
+        String sql = "select count (genre_name) from genres where genre_id = ?";
+        Long count = jdbcTemplate.queryForObject(sql, Long.class, id);
+        return count != 0;
     }
 
     private Genre mapRow(ResultSet rs) throws SQLException {
         return new Genre(rs.getLong("genre_id"), rs.getString("genre_name"));
+    }
+
+    public List<Long> getFilmGenresId(long filmId){
+        String sql = "select genre_id from film_genre where film_id = ?";
+        return jdbcTemplate.queryForList(sql, Long.class, filmId);
     }
 }

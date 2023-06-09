@@ -21,40 +21,38 @@ public class MpaDaoImpl implements MpaDao {
 
     @Override
     public Collection<Mpa> getAllMpa() {
-        String sql = "select * from mpaa";
+        String sql = "select * from mpa";
         return jdbcTemplate.query(sql, (rs, rowNum) -> mapRow(rs));
     }
 
     @Override
     public Mpa getMpaById(long id) {
         // выполняем запрос к базе данных.
-        SqlRowSet genreRows = jdbcTemplate.queryForRowSet("select * from mpaa where mpaa_id = ?", id);
+        SqlRowSet genreRows = jdbcTemplate.queryForRowSet("select * from mpa where mpa_id = ?", id);
 
         // обрабатываем результат выполнения запроса
         if (genreRows.next()) {
             Mpa mpa = new Mpa(
-                    genreRows.getLong("mpaa_id"),
+                    genreRows.getLong("mpa_id"),
                     genreRows.getString("name"));
 
-            log.info("Найден жанр: {} {}", genreRows.getString("mpaa_id"), genreRows.getString("name"));
+            log.info("Найдена категория фильма {} с Id {}", genreRows.getString("name"), genreRows.getString("mpa_id"));
 
             return mpa;
         } else {
-            log.debug("Жанр с идентификатором {} не найден.", id);
-            return null;
+            log.debug("Категория фильма с Id {} не найден.", id);
+            throw new NotFoundException(String.format("Категория фильма с Id %s не найден.", id));
         }
     }
 
     @Override
-    public void mpaExisted(long id) {
-        String sqlQuery = "select name from mpa WHERE mpaa_id = ?";
-        SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sqlQuery, id);
-        if (!rowSet.next()) {
-            throw new NotFoundException(String.format("Не корректный id: %s mpa", id));
-        }
+    public boolean mpaExists(long id) {
+        String sql = "select count (name) from mpa where mpa_id = ?";
+        Long count = jdbcTemplate.queryForObject(sql, Long.class, id);
+        return count != 0;
     }
 
     private Mpa mapRow(ResultSet rs) throws SQLException {
-        return new Mpa(rs.getLong("mpaa_id"), rs.getString("name"));
+        return new Mpa(rs.getLong("mpa_id"), rs.getString("name"));
     }
 }

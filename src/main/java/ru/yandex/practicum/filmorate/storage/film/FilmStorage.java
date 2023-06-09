@@ -19,4 +19,7 @@ public interface FilmStorage {
 
     //удаление фильма по id
     void deleteFilmById(long id);
+
+    //проверка существования фильма по id
+    boolean filmExists(long id);
 }
