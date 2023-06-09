@@ -50,7 +50,6 @@ public class GenresDaoImpl implements GenresDao {
     public boolean mpaExists(long id) {
         String sql = "select count (genre_name) from genres where genre_id = ?";
         Long count = jdbcTemplate.queryForObject(sql, Long.class, id);
-        
         return count != 0;
     }
 
