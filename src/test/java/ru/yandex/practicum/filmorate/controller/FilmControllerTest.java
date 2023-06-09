@@ -13,11 +13,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FilmControllerTest {
 
-    /*private FilmController filmController;
+    private FilmController filmController;
 
     @BeforeEach
     void beforeEach() {
-        FilmStorage filmStorage = new FilmDbStorage(1, "name", "description", LocalDate.of(2000, 11, 20), 100);
+        FilmStorage filmStorage = new FilmStorage();
         filmController = new FilmController(new FilmService(filmStorage, new FilmDbStorage()));
     }
 
@@ -50,5 +50,5 @@ public class FilmControllerTest {
         filmController.updateFilm(filmUpdate);
         assertEquals(1, filmController.getAllFilms().size());
         assertEquals(filmUpdate, filmController.getFilmsById(1));
-    }*/
+    }
 }
