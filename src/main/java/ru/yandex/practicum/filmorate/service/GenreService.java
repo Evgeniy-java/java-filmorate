@@ -15,11 +15,11 @@ import java.util.Collection;
 public class GenreService {
     private final GenresDao genresDao;
 
-    public Collection<Genre> getAllGenres(){
+    public Collection<Genre> getAllGenres() {
         return genresDao.getAllGenres();
     }
 
-    public Genre getGenreById(long id){
+    public Genre getGenreById(long id) {
         if (genresDao.mpaExists(id)) {
             log.debug("Получен id: {} genre", id);
             return genresDao.getGenreById(id);
