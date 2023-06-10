@@ -104,7 +104,7 @@ public class FilmDaoImpl implements FilmDao {
 
     @Override
     public void deleteFilmById(long id) {
-        String sql = "delete from film where film_id = ?";
+        String sql = "delete from films where film_id = ?";
         jdbcTemplate.update(sql, id);
     }
 
