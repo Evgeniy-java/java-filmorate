@@ -35,7 +35,7 @@ class FilmDaoTest {
     }
 
     @Test
-    void getAll() {
+    void getAllFilms() {
         assertThat(filmDao.getAllFilms()).hasSize(2);
     }
 
