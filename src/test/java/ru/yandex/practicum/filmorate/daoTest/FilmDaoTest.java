@@ -24,7 +24,7 @@ class FilmDaoTest {
     private final MpaDao mpaDao;
 
     @Test
-    void FilmById1() {
+    void FilmById() {
         assertThat(filmDao.getFilmsById(1)).hasFieldOrPropertyWithValue("id", 1L)
                 .hasFieldOrPropertyWithValue("name", "film1")
                 .hasFieldOrPropertyWithValue("description", "description1");
