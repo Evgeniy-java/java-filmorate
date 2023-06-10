@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.daoTest;
 
 import lombok.RequiredArgsConstructor;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -25,8 +24,7 @@ class FilmDaoTest {
     private final MpaDao mpaDao;
 
     @Test
-    public void FilmById1() {
-
+    void FilmById1() {
         assertThat(filmDao.getFilmsById(1)).hasFieldOrPropertyWithValue("id", 1L)
                 .hasFieldOrPropertyWithValue("name", "film1")
                 .hasFieldOrPropertyWithValue("description", "description1");
