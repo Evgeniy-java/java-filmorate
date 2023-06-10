@@ -11,7 +11,7 @@ public interface GenresDao {
 
     Genre getGenreById(long id);
 
-    boolean mpaExists(long id);
+    boolean genreExists(long id);
 
     List<Long> getFilmGenresId(long filmId);
 }

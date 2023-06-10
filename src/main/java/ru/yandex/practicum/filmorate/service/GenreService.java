@@ -20,7 +20,7 @@ public class GenreService {
     }
 
     public Genre getGenreById(long id) {
-        if (genresDao.mpaExists(id)) {
+        if (genresDao.genreExists(id)) {
             log.debug("Получен id: {} genre", id);
             return genresDao.getGenreById(id);
         } else {

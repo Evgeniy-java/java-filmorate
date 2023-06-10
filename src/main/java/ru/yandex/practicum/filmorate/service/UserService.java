@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.dao.FriendsDao;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.user.UserStorage;
+import ru.yandex.practicum.filmorate.dao.UserDao;
 
 import java.util.*;
 
@@ -13,33 +13,33 @@ import java.util.*;
 @RequiredArgsConstructor
 public class UserService {
 
-    private final UserStorage userStorage;
+    private final UserDao userDao;
     private final FriendsDao friendsDao;
 
 
     //получить пользователя по id
     public User getUserById(long id) {
-        return userStorage.getUserById(id);
+        return userDao.getUserById(id);
     }
 
     //получение списка всех пользователей
     public Collection<User> getAllUsers() {
-        return userStorage.getAllUsers();
+        return userDao.getAllUsers();
     }
 
     //создание пользователя
     public User createUser(User user) {
-        return userStorage.createUser(user);
+        return userDao.createUser(user);
     }
 
     //обновление пользователя
     public User updateUser(User user) {
-        return userStorage.updateUser(user);
+        return userDao.updateUser(user);
     }
 
     //добавить пользователя в друзья
     public void addFriend(long userId, long friendId) {
-        if (userStorage.userExists(friendId)) {
+        if (userDao.userExists(friendId)) {
             friendsDao.addToFriends(userId, friendId);
         } else {
             throw new NotFoundException(String.format("id %s друга не корректный", friendId));
@@ -48,7 +48,7 @@ public class UserService {
 
     //удалить из друзей
     public void deleteFriend(long userId, long friendId) {
-        if (userStorage.userExists(friendId)) {
+        if (userDao.userExists(friendId)) {
             friendsDao.deleteFriend(userId, friendId);
         } else {
             throw new NotFoundException(String.format("id %s друга не корректный", friendId));
