@@ -24,13 +24,12 @@ class FilmDaoTest {
     private final FilmDao filmDao;
     private final MpaDao mpaDao;
 
-    @DisplayName("getFilmById test")
     @Test
     public void FilmById1() {
 
         assertThat(filmDao.getFilmsById(1)).hasFieldOrPropertyWithValue("id", 1L)
-        .hasFieldOrPropertyWithValue("name","film1")
-        .hasFieldOrPropertyWithValue("description", "description1");
+                .hasFieldOrPropertyWithValue("name", "film1")
+                .hasFieldOrPropertyWithValue("description", "description1");
 
     }
 
@@ -40,7 +39,7 @@ class FilmDaoTest {
     }
 
     @Test
-    void createFilm(){
+    void createFilm() {
         Film film3 = new Film();
         film3.setName("film3");
         film3.setDescription("description3");
