@@ -26,14 +26,14 @@ public class LikeDaoTest {
     void addLike() {
         likesDao.addLike(2, 2);
 
-        assertEquals(2,likesDao.getLikedUsersId(2).size());
+        assertEquals(2, likesDao.getLikedUsersId(2).size());
     }
 
     @Test
     void deleteLike() {
         likesDao.deleteLike(2, 1);
 
-        assertEquals(0,likesDao.getLikedUsersId(1).size());
+        assertEquals(0, likesDao.getLikedUsersId(1).size());
     }
 
     @Test
