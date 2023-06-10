@@ -10,8 +10,8 @@ VALUES ('film1','description1','2021-01-01','60','1'),('film2','description2','2
 INSERT INTO USERS (EMAIL, LOGIN, FIRST_NAME, BIRTHDAY) 
 VALUES ('test1@mail.ru','login1','firstName1','2001-01-01'),('test2@mail.ru','login2','firstName2','2002-02-02');
 
---INSERT INTO FRIENDSHIP (USER_ID, FRIEND_ID) 
---VALUES ('1','2');
+INSERT INTO FRIENDSHIP (USER_ID, FRIEND_ID) 
+VALUES ('1','2');
 
---INSERT INTO FILM_LIKE (FILM_ID, USER_ID) 
---VALUE ('2','1');
+INSERT INTO FILM_LIKE (FILM_ID, USER_ID) 
+VALUES ('2','1');

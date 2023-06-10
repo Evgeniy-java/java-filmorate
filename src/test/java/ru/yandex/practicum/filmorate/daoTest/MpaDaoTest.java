@@ -19,12 +19,12 @@ public class MpaDaoTest {
     private final MpaDao mpaDao;
 
     @Test
-    void getAllMpaTest() {
+    void getAllMpa() {
         assertEquals(5, mpaDao.getAllMpa().size());
     }
 
     @Test
-    void getMpaByIdTest() {
+    void getMpaById() {
         assertEquals(1, mpaDao.getMpaById(1).getId());
         assertEquals("G", mpaDao.getMpaById(1).getName());
     }
