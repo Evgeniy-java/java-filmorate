@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.dao.FriendsDao;
 import ru.yandex.practicum.filmorate.dao.UserDao;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
@@ -21,6 +22,7 @@ import java.util.*;
 @Primary
 public class UserDaoImpl implements UserDao {
     private final JdbcTemplate jdbcTemplate;
+    private final FriendsDao friendsDao;
 
     @Override
     public User getUserById(long id) {
@@ -42,7 +44,6 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public User createUser(User user) {
-
         SimpleJdbcInsert insert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("users")
                 .usingGeneratedKeyColumns("user_id");
@@ -52,7 +53,6 @@ public class UserDaoImpl implements UserDao {
         values.put("login", user.getLogin());
         values.put("first_name", user.getName());
         values.put("birthday", user.getBirthday());
-
         long userId = (long) insert.executeAndReturnKey(values);
         user.setId(userId);
 
@@ -84,15 +84,7 @@ public class UserDaoImpl implements UserDao {
         } else return false;
     }
 
-    public Collection<User> getUserFriends(Set<Long> friendsId) {
-        String sql = String.join(",", Collections.nCopies(friendsId.size(), "?"));
-
-        return jdbcTemplate.query(String.format("select * from users where user_id in (%s)", sql),
-                new UserMapper(),
-                friendsId.toArray());
-    }
-
-    private static class UserMapper implements RowMapper<User> {
+    private class UserMapper implements RowMapper<User> {
         User user = new User();
 
         @Override
@@ -102,7 +94,8 @@ public class UserDaoImpl implements UserDao {
             user.setLogin(rs.getString("login"));
             user.setName(rs.getString("first_name"));
             user.setBirthday(rs.getDate("birthday").toLocalDate());
-            user.setFriends(null);
+
+            user.getFriends().addAll(friendsDao.getUserFriendsById(user.getId()));
 
             return user;
         }

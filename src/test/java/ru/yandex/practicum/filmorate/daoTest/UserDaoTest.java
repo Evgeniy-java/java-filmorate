@@ -16,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 @AutoConfigureTestDatabase
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
-@Sql({"/data-test.sql"})
+@Sql(scripts = {"/schema-test.sql","/data-test.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 public class UserDaoTest {
 
     private final UserDao userDao;
@@ -37,7 +37,7 @@ public class UserDaoTest {
     void createUser() {
         User user3 = new User();
         user3.setEmail("test3@mail.ru");
-        user3.setName("name3");
+        user3.setLogin("login3");
         user3.setBirthday(LocalDate.of(2003, 3, 3));
 
         userDao.createUser(user3);
@@ -45,8 +45,8 @@ public class UserDaoTest {
         assertThat(userDao.getAllUsers()).hasSize(3);
         assertThat(userDao.getUserById(3))
                 .hasFieldOrPropertyWithValue("id", 3L)
-                .hasFieldOrPropertyWithValue("email", "film3")
-                .hasFieldOrPropertyWithValue("login", "login1")
+                .hasFieldOrPropertyWithValue("email", "test3@mail.ru")
+                .hasFieldOrPropertyWithValue("login", "login3")
                 .hasFieldOrPropertyWithValue("birthday", LocalDate.of(2003, 3, 3));
 
     }

@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 @AutoConfigureTestDatabase
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
-@Sql({"/data-test.sql"})
+@Sql(scripts = {"/schema-test.sql","/data-test.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 public class FriendDaoTest {
     private final FriendsDao friendsDao;
 

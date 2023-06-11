@@ -28,26 +28,16 @@ public class FriendsDaoImpl implements FriendsDao {
     }
 
     @Override
-    public List<User> getUserFriendsById(long userId) {
-        String sql = "SELECT * FROM users WHERE user_id IN " +
-                "(SELECT friend_id AS id FROM friendship WHERE user_id = ?)";
-        SqlRowSet rs = jdbcTemplate.queryForRowSet(sql, userId);
-        List<User> friends = new ArrayList<>();
-        while (rs.next()) {
-            friends.add(new User(rs.getInt("user_id"),
-                    rs.getString("email"),
-                    rs.getString("login"),
-                    rs.getString("first_name"),
-                    Objects.requireNonNull(rs.getDate("birthday")).toLocalDate()));
-        }
-        return friends;
+    public Collection<Long> getUserFriendsById(long userId) {
+        String sql = "select friend_id from friendship where user_id = ?";
+        return jdbcTemplate.queryForList(sql, Long.class, userId);
     }
 
     @Override
-    public Collection<User> getCommonFriends(long userId, long friendId) {
-        String sqlQuery = "SELECT * FROM users " +
-                "WHERE user_id IN (SELECT friend_id FROM friendship WHERE user_id = ?) " +
-                "AND user_id IN (SELECT friend_id FROM friendship WHERE user_id = ?)";
+    public List<User> getCommonFriends(long userId, long friendId) {
+        String sqlQuery = "select * from users " +
+                "where user_id in (select friend_id from friendship where user_id = ?) " +
+                "and user_id in (select friend_id from friendship where user_id = ?)";
         SqlRowSet rs = jdbcTemplate.queryForRowSet(sqlQuery, userId, friendId);
         List<User> commonFriends = new ArrayList<>();
         while (rs.next()) {
@@ -58,7 +48,8 @@ public class FriendsDaoImpl implements FriendsDao {
                     Objects.requireNonNull(rs.getDate("birthday")).toLocalDate()));
         }
         return commonFriends.stream().distinct().collect(Collectors.toList());
-    }
+        }
+
 
     @Override
     public void deleteFriend(long userId, long friendId) {

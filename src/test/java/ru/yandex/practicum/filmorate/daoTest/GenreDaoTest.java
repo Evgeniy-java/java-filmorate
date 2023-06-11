@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest
 @AutoConfigureTestDatabase
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
-@Sql({"/data-test.sql"})
+@Sql(scripts = {"/schema-test.sql","/data-test.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 public class GenreDaoTest {
     private final GenresDao genresDao;
 

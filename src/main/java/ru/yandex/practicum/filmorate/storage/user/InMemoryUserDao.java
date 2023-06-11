@@ -6,7 +6,6 @@ import ru.yandex.practicum.filmorate.dao.UserDao;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.validation.UserValidate;
 
 import java.util.*;
 
@@ -41,9 +40,9 @@ public class InMemoryUserDao implements UserDao {
     //создание пользователя
     @Override
     public User createUser(User user) {
-        if (UserValidate.userValidate(user)) {
+        /*if (UserValidate.userValidate(user)) {
             users.put(user.setId(countId()), user);
-        }
+        }*/
         return user;
     }
 

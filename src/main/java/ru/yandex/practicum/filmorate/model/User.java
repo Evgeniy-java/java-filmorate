@@ -30,9 +30,4 @@ public class User {
         this.name = name;
         this.birthday = birthday;
     }
-
-    public long setId(long id) {
-        this.id = id;
-        return id;
-    }
 }
