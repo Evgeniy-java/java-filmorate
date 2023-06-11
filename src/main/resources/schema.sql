@@ -1,4 +1,6 @@
-
+-- очистить данные в БД для тестирования на git postman
+DROP TABLE IF EXISTS MPA CASCADE;
+DROP TABLE IF EXISTS GENRES CASCADE;
 -- создать нужные таблицы с колонками и pk & fk
 CREATE TABLE IF NOT EXISTS MPA
 (
