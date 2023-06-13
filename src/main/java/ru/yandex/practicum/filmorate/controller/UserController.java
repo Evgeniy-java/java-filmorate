@@ -1,23 +1,23 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.IncorrectParameterException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.validation.UserValidate;
 
 import javax.validation.Valid;
 import java.util.Collection;
+import java.util.List;
 
 @RestController
 @RequestMapping("/users")
 @Slf4j
+@RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
-
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
 
     //получение пользователя по id
     @GetMapping("/{id}")
@@ -41,7 +41,10 @@ public class UserController {
     @PostMapping
     public User createUser(@Valid @RequestBody User user) {
         log.debug("Получен запрос Post /users на добавлен пользователя: {}", user);
-        return userService.createUser(user);
+        if (UserValidate.userValidate(user)) {
+            return userService.createUser(user);
+        }
+        return user;
     }
 
     //обновление пользователя
@@ -83,7 +86,7 @@ public class UserController {
 
     //список друзей, общих с другим пользователем
     @GetMapping("/{id}/friends/common/{otherId}")
-    public Collection<User> getCommonFriends(
+    public List<User> getCommonFriends(
             @PathVariable("id") long id,
             @PathVariable("otherId") long otherId) {
         log.debug("Получен запрос Get /users/{id}/friends/common/{otherId} " +

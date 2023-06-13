@@ -70,8 +70,8 @@ INNER JOIN film_genre AS fG ON f.film_id=fG.film_id;
 SELECT f.name, 
        COUNT(fL.user_id) AS count_likes
 FROM films AS f
-INNER JOIN film_like AS fL ON f.film_id=fL.film_id
-GROUP BY m.name
+RIGHT JOIN film_like AS fL ON fL.film_id=f.film_id
+GROUP BY f.name
 ORDER BY count_likes DESC
 LIMIT 20; 
 ```

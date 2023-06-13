@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.storage.film;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.dao.FilmDao;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -12,7 +13,7 @@ import java.util.Map;
 
 @Component
 @Slf4j
-public class InMemoryFilmStorage implements FilmStorage {
+public class InMemoryFilmDao implements FilmDao {
 
     protected final Map<Long, Film> films = new HashMap<>();
 
@@ -65,5 +66,10 @@ public class InMemoryFilmStorage implements FilmStorage {
         if (!films.containsKey(id)) {
             throw new NotFoundException(String.format("Фильм с Id: %s не найден", id));
         } else films.remove(id);
+    }
+
+    @Override
+    public boolean filmExists(long id) {
+        return films.containsKey(id);
     }
 }

@@ -1,80 +1,76 @@
 package ru.yandex.practicum.filmorate.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.dao.FriendsDao;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.user.UserStorage;
+import ru.yandex.practicum.filmorate.dao.UserDao;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
+@Slf4j
 public class UserService {
-    private final UserStorage userStorage;
 
-    @Autowired
-    public UserService(UserStorage userStorage) {
-        this.userStorage = userStorage;
-    }
+    private final UserDao userDao;
+    private final FriendsDao friendsDao;
+
 
     //получить пользователя по id
     public User getUserById(long id) {
-        return userStorage.getUserById(id);
+        return userDao.getUserById(id);
     }
 
     //получение списка всех пользователей
     public Collection<User> getAllUsers() {
-        return userStorage.getAllUsers();
+        return userDao.getAllUsers();
     }
 
     //создание пользователя
     public User createUser(User user) {
-        return userStorage.createUser(user);
+        log.debug("создание пользователь {}", user);
+        return userDao.createUser(user);
     }
 
     //обновление пользователя
     public User updateUser(User user) {
-        return userStorage.updateUser(user);
+        log.debug("обновлен пользователь {}", user);
+        return userDao.updateUser(user);
     }
 
     //добавить пользователя в друзья
     public void addFriend(long userId, long friendId) {
-        User userById = userStorage.getUserById(userId);
-        User friendById = userStorage.getUserById(friendId);
-
-        userById.getFriends().add(friendId);
-        friendById.getFriends().add(userId);
+        if (userDao.userExists(friendId)) {
+            friendsDao.addToFriends(userId, friendId);
+            log.debug("добавлен друг {} для пользователя {}", friendId, userId);
+        } else {
+            throw new NotFoundException(String.format("id %s друга не корректный", friendId));
+        }
     }
 
-    //удалить из дрзуей
+    //удалить из друзей
     public void deleteFriend(long userId, long friendId) {
-        User userById = userStorage.getUserById(userId);
-        User friendById = userStorage.getUserById(friendId);
-
-        userById.getFriends().remove(friendId);
-        friendById.getFriends().remove(userId);
+        if (userDao.userExists(friendId)) {
+            friendsDao.deleteFriend(userId, friendId);
+            log.debug("удален друг {} у пользователя {}", friendId, userId);
+        } else {
+            throw new NotFoundException(String.format("id %s друга не корректный", friendId));
+        }
     }
 
     //получить список друзей пользователя
-    public List<User> getUserFriendsById(long id) {
-        Set<Long> userFriends = userStorage.getUserById(id).getFriends();
-
-        return userFriends.stream()
-                .map(userStorage::getUserById)
+    public Collection<User> getUserFriendsById(long id) {
+        return friendsDao.getUserFriendsById(id).stream()
+                .map(userDao::getUserById)
                 .collect(Collectors.toList());
     }
 
     //получить список друзей общих с другим пользователем
-    public Collection<User> getCommonFriends(long firstUserId, long secondUserId) {
-        //первый пользователь
-        User firstUser = userStorage.getUserById(firstUserId);
-        //второй пользователь
-        User secondUser = userStorage.getUserById(secondUserId);
-
-        Set<Long> commonFriends = new HashSet<>(firstUser.getFriends());
-        commonFriends.retainAll(secondUser.getFriends());
-        return commonFriends.stream()
-                .map(userStorage::getUserById)
-                .collect(Collectors.toList());
+    public List<User> getCommonFriends(long firstUserId, long secondUserId) {
+        return friendsDao.getCommonFriends(firstUserId, secondUserId);
     }
 }
