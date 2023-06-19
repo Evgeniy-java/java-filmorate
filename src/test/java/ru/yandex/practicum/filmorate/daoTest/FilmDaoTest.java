@@ -28,7 +28,6 @@ class FilmDaoTest {
         assertThat(filmDao.getFilmsById(1)).hasFieldOrPropertyWithValue("id", 1L)
                 .hasFieldOrPropertyWithValue("name", "film1")
                 .hasFieldOrPropertyWithValue("description", "description1");
-
     }
 
     @Test
