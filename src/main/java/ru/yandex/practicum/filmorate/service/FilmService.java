@@ -23,29 +23,35 @@ public class FilmService {
     //получить фильм по Id
     public Film getFilmsById(Long id) {
         if (filmDao.filmExists(id)) {
+            log.debug("Получение фильма с id {}",id);
             return filmDao.getFilmsById(id);
         } else {
+            log.debug("Фильм с id {} не найден",id);
             throw new NotFoundException(String.format("id %s не корректный", id));
         }
     }
 
     //получение всех фильмов.
     public Collection<Film> getAllFilms() {
+        log.debug("Получение всех фильмов");
         return filmDao.getAllFilms();
     }
 
     //добавление фильма.
     public Film createFilm(Film film) {
+        log.debug("Добавление фильма {}",film);
         return filmDao.createFilm(film);
     }
 
     //обновление фильма.
     public Film updateFilm(Film film) {
+        log.debug("Обновление фильма {}",film);
         return filmDao.updateFilm(film);
     }
 
     //удаление фильма по id
     public void deleteFilmById(long id) {
+        log.debug("Удаление фильма с id {}",id);
         filmDao.deleteFilmById(id);
     }
 
@@ -79,6 +85,7 @@ public class FilmService {
 
     //возвращает список из первых count фильмов по количеству лайков
     public Collection<Film> getPopularFilms(long count) {
+        log.debug("Получение списка из первых {} фильмов по количеству лайков", count);
         return likesDao.getPopularFilmsIds(count).stream()
                 .map(filmDao::getFilmsById)
                 .collect(Collectors.toList());

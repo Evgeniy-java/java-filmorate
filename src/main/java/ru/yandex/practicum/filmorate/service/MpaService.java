@@ -16,15 +16,17 @@ public class MpaService {
     private final MpaDao mpaDao;
 
     public Collection<Mpa> getAllMpa() {
+        log.debug("Получение списка категорий фильмов");
         return mpaDao.getAllMpa();
     }
 
     public Mpa getMpaById(long id) {
         if (mpaDao.mpaExists(id)) {
+            log.debug("Получение категории фильма по id {}", id);
             return mpaDao.getMpaById(id);
         } else {
-            log.debug("Не корректный id: {} mpa", id);
-            throw new NotFoundException(String.format("Не корректный id: %s mpa", id));
+            log.debug("Не корректный id: {} категории фильма", id);
+            throw new NotFoundException(String.format("Не корректный id: %s категории фильма", id));
         }
     }
 }
