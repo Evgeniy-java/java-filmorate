@@ -22,23 +22,25 @@ public class UserService {
 
     //получить пользователя по id
     public User getUserById(long id) {
+        log.debug("Получение пользователя с id {}",id);
         return userDao.getUserById(id);
     }
 
     //получение списка всех пользователей
     public Collection<User> getAllUsers() {
+        log.debug("Получение списка пользователей");
         return userDao.getAllUsers();
     }
 
     //создание пользователя
     public User createUser(User user) {
-        log.debug("создание пользователь {}", user);
+        log.debug("Создание пользователя {}", user);
         return userDao.createUser(user);
     }
 
     //обновление пользователя
     public User updateUser(User user) {
-        log.debug("обновлен пользователь {}", user);
+        log.debug("Обновление пользователя {}", user);
         return userDao.updateUser(user);
     }
 
@@ -64,6 +66,7 @@ public class UserService {
 
     //получить список друзей пользователя
     public Collection<User> getUserFriendsById(long id) {
+        log.debug("Получение списка друзей пользователя с id {}", id);
         return friendsDao.getUserFriendsById(id).stream()
                 .map(userDao::getUserById)
                 .collect(Collectors.toList());
@@ -71,6 +74,7 @@ public class UserService {
 
     //получить список друзей общих с другим пользователем
     public List<User> getCommonFriends(long firstUserId, long secondUserId) {
+        log.debug("Получение списка друзей пользователя с id {} общих c пользователя с id {}", firstUserId,secondUserId);
         return friendsDao.getCommonFriends(firstUserId, secondUserId);
     }
 }
