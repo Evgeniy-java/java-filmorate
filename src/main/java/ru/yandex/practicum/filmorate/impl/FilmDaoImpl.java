@@ -9,13 +9,12 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.dao.FilmDao;
-import ru.yandex.practicum.filmorate.dao.GenresDao;
 import ru.yandex.practicum.filmorate.dao.LikesDao;
-import ru.yandex.practicum.filmorate.dao.MpaDao;
 import ru.yandex.practicum.filmorate.exception.IncorrectParameterException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.model.Mpa;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -31,26 +30,30 @@ public class FilmDaoImpl implements FilmDao {
     private final JdbcTemplate jdbcTemplate;
 
     private final LikesDao likesDao;
-    private final MpaDao mpaDao;
-    private final GenresDao genresDao;
 
     @Override
     public Film getFilmsById(long id) {
-        String sql = "select * from films where film_id = ?";
-        List<Film> film = jdbcTemplate.query(sql, new FilmMapper(), id);
+        String sql = "SELECT f.*, m.name AS mpa_name FROM films f, mpa m WHERE f.mpa_id = m.mpa_id AND f.film_id = ?";
+        List<Film> films = jdbcTemplate.query(sql, new FilmMapper(), id);
 
-        if (!film.isEmpty()) {
+        if (!films.isEmpty()) {
             log.debug("Получен фильм с id - {}", id);
-            return film.get(0);
+            Film film = films.get(0);
+            String sqlGenre = "SELECT fg.film_id, g.genre_id, g.genre_name FROM film_genre AS fg, genres AS g WHERE fg.genre_id = g.genre_id AND fg.film_id";
+            List<Genre> filmGenre = jdbcTemplate.query(sqlGenre, this::makeGenre);
+            for (Genre genre : filmGenre) {
+                film.getGenres().add(genre);
+            }
+            return film;
         } else {
             log.warn("Фильма с id {} нет", id);
-            throw new IncorrectParameterException(String.format("Фильма с id %s нет", id));
+            throw new IncorrectParameterException(String.format("Фильма с id %s нет в БД", id));
         }
     }
 
     @Override
     public Collection<Film> getAllFilms() {
-        String sql = "select * from films";
+        String sql = "SELECT f.*, m.name AS mpa_name FROM films f, mpa m WHERE f.mpa_id = m.mpa_id";
         return jdbcTemplate.query(sql, new FilmMapper());
     }
 
@@ -125,15 +128,19 @@ public class FilmDaoImpl implements FilmDao {
             film.setDescription(rs.getString("description"));
             film.setReleaseDate((rs.getDate("release_date").toLocalDate()));
             film.setDuration(rs.getLong("duration"));
-            film.setMpa(mpaDao.getMpaById(rs.getLong("mpa_id")));
             film.getLikes().addAll(likesDao.getLikedUsersId(rs.getLong("film_id")));
-
-            for (Long genreId : genresDao.getFilmGenresId(rs.getLong("film_id"))) {
-                film.getGenres().add(genresDao.getGenreById(genreId));
-            }
+            film.setMpa(new Mpa(rs.getLong("mpa_id"),
+                    rs.getString("mpa_name")));
 
             return film;
         }
+    }
+
+    public Genre makeGenre(final ResultSet rs, final long rowNum) throws SQLException {
+        final Genre genre = new Genre();
+        genre.setId(rs.getLong("genre_id"));
+        genre.setName(rs.getString("genre_name"));
+        return genre;
     }
 
     private void updateGenreFilmTable(Film film) {

@@ -28,15 +28,15 @@ public class MpaDaoImpl implements MpaDao {
     @Override
     public Mpa getMpaById(long id) {
         // выполняем запрос к базе данных.
-        SqlRowSet genreRows = jdbcTemplate.queryForRowSet("select * from mpa where mpa_id = ?", id);
+        SqlRowSet mpaRows = jdbcTemplate.queryForRowSet("select * from mpa where mpa_id = ?", id);
 
         // обрабатываем результат выполнения запроса
-        if (genreRows.next()) {
+        if (mpaRows.next()) {
             Mpa mpa = new Mpa(
-                    genreRows.getLong("mpa_id"),
-                    genreRows.getString("name"));
+                    mpaRows.getLong("mpa_id"),
+                    mpaRows.getString("name"));
 
-            log.info("Найдена категория фильма {} с Id {}", genreRows.getString("name"), genreRows.getString("mpa_id"));
+            log.info("Найдена категория фильма {} с Id {}", mpaRows.getString("name"), mpaRows.getString("mpa_id"));
 
             return mpa;
         } else {
